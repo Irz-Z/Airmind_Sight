@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirMind Sight - สภาพอากาศรายพื้นที่</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="individual.js" defer></script>
+</head>
+<body>
+    <div class="clouds">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="image/icon.png" alt="AIRMIND SIGHT Logo" class="logo-image">    
+            AIRMIND SIGHT
+        </div>
+        <div class="nav-links">
+            <a href="#" onclick="showDemo()">For Business</a>
+            <a href="#" onclick="showDemo()">LOGIN</a>
+            <a href="#" onclick="showDemo()">SIGN UP</a>
+        </div>
+    </nav>
+
+    <main class="main-content" style="background:#ededed;min-height:calc(100vh - 120px);padding:0 0 40px 0;">
+        <!-- Search Box -->
+        <div class="search-container" style="max-width:420px;margin:0 auto 24px auto;position:relative;">
+            <input type="text" class="search-box" id="search-box" placeholder="ค้นหาสถานที่" style="width:100%;" oninput="handleSearch(this.value)" onkeydown="if(event.key==='Enter'){searchPlace()}">
+            <div class="search-icon" style="left:15px;top:50%;transform:translateY(-50%);position:absolute;">
+                <img src="image/search 1.png" alt="Search Icon" style="width:20px;height:20px;vertical-align:middle;">
+            </div>
+            <div class="loading-animation">
+                <div class="spinner"></div>
+            </div>
+            <div class="autocomplete-suggestions" style="position:absolute;left:0;right:0;top:110%;z-index:1001;"></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;max-width:1100px;margin:0 auto;padding:40px 0 0 0;gap:32px;">
+            <!-- Weather/Location Left -->
+            <div style="flex:1;min-width:320px;max-width:420px;background:#fff;border-radius:18px;padding:32px 28px;box-shadow:0 6px 32px rgba(0,0,0,0.10);">
+                <div style="font-size:1.1rem;color:#888;margin-bottom:8px;">
+                    <span style="font-weight:600;">Weather</span> | Air Quality
+                </div>
+                <div style="display:flex;align-items:center;gap:18px;">
+                    <img src="image/image 2.png" alt="weather icon" style="width:70px;height:70px;">
+                    <div>
+                        <div style="font-size:2.8rem;font-weight:700;color:#222;" id="weather-temp">--°C</div>
+                        <div style="font-size:1.2rem;font-weight:600;" id="place-title">สถานที่</div>
+                    </div>
+                </div>
+                <div style="margin:18px 0 8px 0;font-size:1rem;color:#444;" id="weather-detail">--</div>
+                <div style="font-size:0.98rem;color:#666;line-height:1.6;">
+                    <div id="weather-feels">Feels like --°C</div>
+                    <div id="weather-rain">Rain Precipitation: --%</div>
+                    <div id="weather-humidity">Humidity: --%</div>
+                    <div id="weather-wind">Wind: -- km/hr</div>
+                </div>
+                <div style="margin-top:28px;">
+                    <div style="font-weight:600;font-size:1.1rem;margin-bottom:8px;">Daily Forecast</div>
+                    <div id="forecast-graph" style="background:#222;border-radius:10px;padding:18px 10px;min-height:80px;color:#fff;text-align:center;">(กราฟแสดงอุณหภูมิรายชั่วโมง)</div>
+                </div>
+            </div>
+            <!-- Date/Time Right -->
+            <div style="flex:0 0 260px;display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
+                <div style="font-size:1.2rem;font-weight:600;text-align:right;">Wednesday</div>
+                <div style="font-size:2rem;font-weight:700;text-align:right;" id="date-text">25 June 2025</div>
+                <div style="font-size:2rem;font-weight:700;text-align:right;" id="time-text">3:22 PM</div>
+            </div>
+        </div>
+        <!-- Area Recommendation -->
+        <div style="max-width:1100px;margin:40px auto 0 auto;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                <div style="font-family:monospace;font-size:2rem;font-weight:700;">Area Recommendation</div>
+                <a href="#" style="font-size:1.1rem;font-weight:500;color:#222;text-decoration:none;">see more &gt;</a>
+            </div>
+            <div id="recommendation-list" style="display:flex;gap:24px;flex-wrap:wrap;">
+                <!-- Card ตัวอย่าง -->
+                <div class="rec-card" style="background:#cfc3c7;border-radius:18px;padding:0 0 18px 0;min-width:180px;max-width:220px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <img src="image/image 2.png" alt="rec1" style="width:100%;height:120px;object-fit:cover;border-radius:18px 18px 0 0;">
+                    <div style="padding:10px 16px 0 16px;">
+                        <div style="font-size:1.1rem;font-weight:600;">location</div>
+                        <div style="font-size:0.98rem;">Air Quality<br>Temperature<br>Humidity</div>
+                    </div>
+                </div>
+                <div class="rec-card" style="background:#cfc3c7;border-radius:18px;padding:0 0 18px 0;min-width:180px;max-width:220px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <img src="image/image 5.png" alt="rec2" style="width:100%;height:120px;object-fit:cover;border-radius:18px 18px 0 0;">
+                    <div style="padding:10px 16px 0 16px;">
+                        <div style="font-size:1.1rem;font-weight:600;">location</div>
+                        <div style="font-size:0.98rem;">Air Quality<br>Temperature<br>Humidity</div>
+                    </div>
+                </div>
+                <div class="rec-card" style="background:#cfc3c7;border-radius:18px;padding:0 0 18px 0;min-width:180px;max-width:220px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <img src="image/image 6.png" alt="rec3" style="width:100%;height:120px;object-fit:cover;border-radius:18px 18px 0 0;">
+                    <div style="padding:10px 16px 0 16px;">
+                        <div style="font-size:1.1rem;font-weight:600;">location</div>
+                        <div style="font-size:0.98rem;">Air Quality<br>Temperature<br>Humidity</div>
+                    </div>
+                </div>
+                <div class="rec-card" style="background:#cfc3c7;border-radius:18px;padding:0 0 18px 0;min-width:180px;max-width:220px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <img src="image/search 1.png" alt="rec4" style="width:100%;height:120px;object-fit:cover;border-radius:18px 18px 0 0;">
+                    <div style="padding:10px 16px 0 16px;">
+                        <div style="font-size:1.1rem;font-weight:600;">location</div>
+                        <div style="font-size:0.98rem;">Air Quality<br>Temperature<br>Humidity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo"><img src="image/icon.png" alt="Footer Icon" style="width:20px;height:20px;margin-right:8px;vertical-align:middle;">AIRMIND SIGHT</div>
+            <div class="footer-text">
+                <div class="footer-text-left">ระบบพยากรณ์อากาศและฝุ่น PM2.5 อัจฉริยะเพื่อกลยุทธ์ธุรกิจและความปลอดภัยของสังคม</div>
+                <div class="footer-text-right">For educaional purposes only</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    function searchPlace() {
+        const val = document.getElementById('search-box').value.trim();
+        if(val.length > 0) {
+            window.location.href = `individual.html?place=${encodeURIComponent(val)}`;
+        }
+    }
+    // Autofill search box with current place
+    window.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const place = urlParams.get('place');
+        if(place) document.getElementById('search-box').value = place;
+    });
+    </script>
+</body>
+</html>
