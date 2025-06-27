@@ -38,7 +38,8 @@ function handleSearch(query) {
     const loadingAnimation = document.querySelector('.loading-animation');
     createSuggestionBox();
     
-    if (query.length > 2) {
+    // เริ่มแนะนำตั้งแต่พิมพ์ 1 ตัวอักษรขึ้นไป
+    if (query.length > 0) {
         if (!isRateLimited()) {
             loadingAnimation.style.display = 'block';
             
@@ -56,8 +57,13 @@ function handleSearch(query) {
                 fetchSuggestions(query),
                 timeoutPromise
             ]).then(suggestions => {
-                searchCache.set(query, suggestions);
-                showSuggestions(suggestions, query);
+                // ถ้าไม่มี suggestion เลย ให้แสดง fallback suggestion
+                if (!suggestions || suggestions.length === 0) {
+                    showSuggestions(getFallbackSuggestions(), query);
+                } else {
+                    searchCache.set(query, suggestions);
+                    showSuggestions(suggestions, query);
+                }
                 loadingAnimation.style.display = 'none';
             }).catch(() => {
                 loadingAnimation.style.display = 'none';
@@ -68,7 +74,7 @@ function handleSearch(query) {
         }
     } else {
         loadingAnimation.style.display = 'none';
-        showSuggestions([], query);
+        showSuggestions(getFallbackSuggestions(), query);
     }
 }
 
@@ -182,17 +188,20 @@ function showSuggestions(suggestions, query) {
     createSuggestionBox();
     suggestionBox.innerHTML = '';
     
+    // กรอง suggestion ที่เกี่ยวข้องกับ query แบบ case-insensitive และ partial match
     const filtered = (suggestions || []).filter(item => {
+        const name = (item.station.name || '').toLowerCase();
+        const city = (item.station.city || '').toLowerCase();
         const country = (item.station.country || '').toLowerCase();
-        return country.includes('thailand') || country.includes('ประเทศไทย');
+        const q = (query || '').toLowerCase();
+        // partial match
+        return name.includes(q) || city.includes(q) || country.includes(q) || q === '';
     });
     
-    if (!filtered || filtered.length === 0) {
-        suggestionBox.style.display = 'none';
-        return;
-    }
+    // ถ้าไม่มีผลลัพธ์เลย ให้แสดง fallback suggestion
+    const toShow = filtered.length > 0 ? filtered : getFallbackSuggestions();
     
-    filtered.forEach(item => {
+    toShow.forEach(item => {
         const line = document.createElement('div');
         line.className = 'suggestion-item';
         line.style.cssText = `
@@ -222,59 +231,6 @@ function showSuggestions(suggestions, query) {
     });
     
     suggestionBox.style.display = 'block';
-}
-
-// Demo features
-function showDemo() {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #74b9ff, #0984e3);
-        color: white;
-        padding: 15px 25px;
-        border-radius: 25px;
-        font-size: 14px;
-        z-index: 1000;
-        animation: slideInDown 0.5s ease-out;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    `;
-    notification.textContent = 'Demo feature - Full functionality available in production version';
-    document.body.appendChild(notification);
-    setTimeout(() => {
-        notification.style.animation = 'slideInDown 0.5s ease-out reverse';
-        setTimeout(() => notification.remove(), 500);
-    }, 2500);
-}
-
-function demonstrateFeature(type) {
-    const messages = {
-        ai: 'AI-Powered analysis activated! Machine learning algorithms are processing weather patterns...',
-        forecast: '7-Day forecast loading! Detailed hourly predictions being generated...',
-        location: 'Area recommendations ready! Intelligent location-based weather insights available...'
-    };
-    
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-        padding: 20px 30px;
-        border-radius: 15px;
-        font-size: 16px;
-        z-index: 1000;
-        animation: fadeInUp 0.5s ease-out;
-        text-align: center;
-        max-width: 400px;
-    `;
-    notification.textContent = messages[type];
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
 }
 
 // Event listeners

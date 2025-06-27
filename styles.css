@@ -43,6 +43,18 @@ body {
     margin-right: 10px;
 }
 
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-link:hover {
+    opacity: 0.85;
+}
+
 .nav-links {
     display: flex;
     gap: 30px;

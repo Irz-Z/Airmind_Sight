@@ -36,19 +36,11 @@ async function fetchWeatherData(place) {
             return data;
         }
 
-        // If city search fails, try geo search for Thailand
-        const geoUrl = `https://api.waqi.info/feed/geo:13.7563;100.5018/?token=${AQICN_API_KEY}`;
-        const geoResponse = await fetch(geoUrl);
-        const geoData = await geoResponse.json();
-        
-        if (geoData.status === 'ok' && geoData.data) {
-            return geoData;
-        }
-
-        throw new Error('No weather data available');
+        // If city search fails, do not fallback to Bangkok, just return null
+        return null;
     } catch (error) {
         console.error('Weather fetch failed:', error);
-        throw error;
+        return null;
     }
 }
 
@@ -71,6 +63,10 @@ async function loadWeatherAndLocation() {
 
     try {
         const weatherData = await fetchWeatherData(place);
+        if (!weatherData || !weatherData.data) {
+            updateUIWithError(elements, 'ไม่พบข้อมูล');
+            return;
+        }
         updateUIWithWeatherData(elements, weatherData.data);
     } catch (error) {
         console.error('Error loading weather data:', error);
@@ -81,7 +77,21 @@ async function loadWeatherAndLocation() {
 function updateUIWithWeatherData(elements, data) {
     if (!data) return;
 
-    if (elements.placeTitle) elements.placeTitle.textContent = data.city.name;
+    // Use only province or city name for display, not the full station name
+    let displayName = '';
+    if (data.city && data.city.name) {
+        // Try to extract province or district from the city name
+        // Example: "Municipal Waste Water Pumping Station, Nakhon Ratchasima, Thailand"
+        // We want only "Nakhon Ratchasima" (province/city)
+        const parts = data.city.name.split(',').map(s => s.trim());
+        if (parts.length >= 2) {
+            // Use the second part (province/city)
+            displayName = parts[parts.length - 2];
+        } else {
+            displayName = data.city.name;
+        }
+    }
+    if (elements.placeTitle) elements.placeTitle.textContent = displayName || data.city.name;
     if (elements.weatherTemp) {
         const temp = data.iaqi.t ? Math.round(data.iaqi.t.v) : '--';
         elements.weatherTemp.textContent = `${temp}°C`;
