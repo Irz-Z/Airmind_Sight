@@ -1,0 +1,56 @@
+<html lang="th_TH">
+    <head>
+        <title>Airmind Sight</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="bg-white drop-shadow-2xl h-20 p-4">
+            <div class="h-auto flex justify-between items-center pl-10 pr-10">
+                <a href="homepage.html">
+                    <div class="h-auto w-auto flex items-center gap-3">
+                        <img class="h-auto size-12" src="img/wind.png" alt="logo">
+                        <p class="h-auto font-[Gabarito] text-2xl font-bold">AIRMIND SIGHT</p>
+                    </div>
+                </a>
+                <ul class="h-auto flex list-none gap-5">
+                    <li class="p-2 rounded-2xl hover:text-gray-500 hover:ease-in-out duration-200"><a href="">for Business</a></li>
+                    <li class="p-2 rounded-2xl hover:text-gray-500 hover:ease-in-out duration-200"><a href="">Log in</a></li>
+                    <li class="p-2 rounded-2xl hover:text-gray-500 hover:ease-in-out duration-200"><a href="">Sign up</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="relative w-full h-full flex flex-col text-black p-15 bg-white-500 bg-[url('img/sunny.jpg')] bg-blend-lighten bg-center bg-cover">
+            <div class="text-bold text-xl font-[Gabarito] mb-4">
+                <a href="individual-weather.html" class="hover:text-white duration-200">Weather</a> |
+                <a href="individual-air.html" class="hover:text-white duration-200"><b>Air Quality</b></a>
+            </div>
+            <div class="flex w-auto">
+                <div class="flex">
+                    <img src="img/sun.png" alt="sunny" class="size-48 mb-4 p-5">
+                    <div class="flex flex-col items-start">
+                        <div class="font-[Gabarito] text-4xl font-bold">Nakhonratchasima, Thailand</div>
+                        <div class="flex font-[Gabarito] text-6xl font-bold">128<div class="font-[Gabarito] text-xl font-thin">AQI</div></div>
+                        <div class="flex flex-col">
+                            <div class="font-[Gabarito]">PM2.5: 12</div>
+                            <div class="font-[Gabarito]">PM10: 12</div>
+                            <div class="font-[Gabarito]">O3: 32</div>
+                            <div class="font-[Gabarito]">NO2: 12</div>
+                            <div class="font-[Gabarito]">CO: 12</div>
+                            <div class="font-[Gabarito]">Humidity: 23</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-col w-auto align-items-end ml-auto">
+                    <div class="font-[Gabarito] font-bold text-4xl">Wednesday</div>
+                    <div class="font-[Gabarito] font-bold text-4xl">25 June 2025</div>
+                    <div class="font-[Gabarito] font-bold text-4xl">3:22 PM</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
