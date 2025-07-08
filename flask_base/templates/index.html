@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🇹🇭 ค้นหาสถานที่ท่องเที่ยวในไทย</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            thai: {
+              red: '#ED1C24',
+              blue: '#2E2A7F',
+              white: '#FFFFFF'
+            }
+          },
+          fontFamily: {
+            'thai': ['Kanit', 'Noto Sans Thai', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Kanit', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .pulse-animation { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .air-quality-good { background: linear-gradient(135deg, #4ade80, #22c55e); }
+    .air-quality-moderate { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .air-quality-poor { background: linear-gradient(135deg, #f87171, #ef4444); }
+    .air-quality-bad { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+    .loading-spinner { border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- Header -->
+  <header class="gradient-bg text-white py-8 mb-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-2">🇹🇭 ค้นหาสถานที่ท่องเที่ยวในไทย</h1>
+      <p class="text-center text-white/90">ค้นหาสถานที่ท่องเที่ยว โรงแรม ร้านอาหาร และข้อมูลคุณภาพอากาศ</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="max-w-6xl mx-auto px-4 pb-8">
+    
+    <!-- Search Form -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <form method="POST" class="flex flex-col sm:flex-row items-center gap-4">
+        <div class="flex-1 w-full">
+          <label for="province" class="block text-sm font-medium text-gray-700 mb-2">ชื่อจังหวัด</label>
+          <input 
+            name="province" 
+            id="province"
+            value="{{ province }}" 
+            placeholder="เช่น เชียงใหม่, โคราช, ภูเก็ต, กรุงเทพมหานคร..." 
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required
+          />
+        </div>
+        <div class="w-full sm:w-auto">
+          <button 
+            type="submit" 
+            class="w-full sm:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+          >
+            🔍 ค้นหา
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Error Message -->
+    {% if error_message %}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8 rounded-lg">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="font-medium">{{ error_message }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Results -->
+    {% if province and results %}
+    <div class="mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">📍 ผลการค้นหาสำหรับจังหวัด: {{ province }}</h2>
+        
+        {% if results.total_count %}
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+          <p class="text-green-800 font-medium">✅ พบข้อมูลทั้งหมด {{ results.total_count }} แห่ง</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Tourism Places with Air Quality -->
+    {% if results.tourism %}
+    <div class="mb-8">
+      <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        🏛️ สถานที่ท่องเที่ยว
+        <span class="ml-2 bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full">{{ results.tourism|length }}</span>
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for place in results.tourism %}
+        <div class="bg-white rounded-lg shadow-md card-hover overflow-hidden">
+          <div class="p-6">
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ place.name }}</h4>
+            
+            <!-- Air Quality Badge -->
+            {% if place.air_quality %}
+            <div class="mb-3">
+              {% set aqi = place.air_quality.aqi %}
+              {% if aqi <= 50 %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  🟢 อากาศดี ({{ aqi }})
+                </span>
+              {% elif aqi <= 100 %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  🟡 ปานกลาง ({{ aqi }})
+                </span>
+              {% elif aqi <= 200 %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                  🟠 ไม่ดี ({{ aqi }})
+                </span>
+              {% else %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  🔴 แย่มาก ({{ aqi }})
+                </span>
+              {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="space-y-2 text-sm text-gray-600">
+              <p class="flex items-start">
+                <span class="font-medium text-gray-800 mr-2">📍 ที่อยู่:</span>
+                <span>{{ place.full_address }}</span>
+              </p>
+              
+              <p class="flex items-center">
+                <span class="font-medium text-gray-800 mr-2">🗺️ พิกัด:</span>
+                <span>{{ "%.4f"|format(place.lat) }}, {{ "%.4f"|format(place.lon) }}</span>
+              </p>
+              
+              {% if place.type %}
+              <p class="flex items-center">
+                <span class="font-medium text-gray-800 mr-2">🏷️ ประเภท:</span>
+                <span>{{ place.type }}</span>
+              </p>
+              {% endif %}
+            </div>
+            
+            <div class="mt-4 flex gap-2">
+              <a 
+                href="https://maps.google.com/?q={{ place.lat }},{{ place.lon }}" 
+                target="_blank" 
+                class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                🗺️ ดูแผนที่
+              </a>
+              
+              {% if place.air_quality %}
+              <button 
+                onclick="showAirQualityDetails('{{ place.air_quality.city }}', {{ place.air_quality.aqi }}, '{{ place.air_quality.description }}')"
+                class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+              >
+                🌬️ ข้อมูลอากาศ
+              </button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Other Categories -->
+    {% for category, places in {
+      "โรงแรม": results.hotels,
+      "ร้านอาหาร": results.restaurants,
+      "ศูนย์การค้า": results.shopping,
+      "วัด/ศาสนสถาน": results.temples,
+    }.items() %}
+    
+    {% if places %}
+    <div class="mb-8">
+      <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        {% if category == "โรงแรม" %}🏨{% endif %}
+        {% if category == "ร้านอาหาร" %}🍽️{% endif %}
+        {% if category == "ศูนย์การค้า" %}🛍️{% endif %}
+        {% if category == "วัด/ศาสนสถาน" %}🙏{% endif %}
+        {{ category }}
+        <span class="ml-2 bg-gray-100 text-gray-800 text-sm px-2 py-1 rounded-full">{{ places|length }}</span>
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for place in places %}
+        <div class="bg-white rounded-lg shadow-md card-hover p-4">
+          <h4 class="font-semibold text-gray-800 mb-2">{{ place.name }}</h4>
+          
+          <div class="space-y-1 text-sm text-gray-600">
+            <p class="flex items-start">
+              <span class="font-medium text-gray-800 mr-1">📍</span>
+              <span class="line-clamp-2">{{ place.full_address }}</span>
+            </p>
+            
+            {% if place.type %}
+            <p class="flex items-center">
+              <span class="font-medium text-gray-800 mr-1">🏷️</span>
+              <span>{{ place.type }}</span>
+            </p>
+            {% endif %}
+          </div>
+          
+          <div class="mt-3">
+            <a 
+              href="https://maps.google.com/?q={{ place.lat }},{{ place.lon }}" 
+              target="_blank" 
+              class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              🗺️ ดูแผนที่
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <!-- No Results Message -->
+    {% if province and not results.tourism and not results.hotels and not results.restaurants and not results.temples and not results.shopping %}
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+      <div class="text-yellow-600 text-6xl mb-4">🔍</div>
+      <h3 class="text-xl font-semibold text-yellow-800 mb-2">ไม่พบข้อมูล</h3>
+      <p class="text-yellow-700">ไม่พบข้อมูลสถานที่ท่องเที่ยวสำหรับจังหวัด "{{ province }}"</p>
+      <p class="text-yellow-600 text-sm mt-2">กรุณาลองใช้ชื่อจังหวัดอื่น หรือตรวจสอบการสะกดคำ</p>
+    </div>
+    {% endif %}
+
+    {% endif %}
+
+    <!-- Popular Provinces -->
+    {% if not province %}
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">🌟 จังหวัดยอดนิยม</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {% for prov in ["เชียงใหม่", "ภูเก็ต", "กรุงเทพมหานคร", "กระบี่", "สุราษฎร์ธานี", "นครราชสีมา", "ชลบุรี", "ขอนแก่น"] %}
+        <button 
+          onclick="document.getElementById('province').value='{{ prov }}'; document.querySelector('form').submit();"
+          class="bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+        >
+          {{ prov }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Air Quality Modal -->
+  <div id="airQualityModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">🌬️ ข้อมูลคุณภาพอากาศ</h3>
+        <button onclick="closeAirQualityModal()" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="airQualityContent">
+        <!-- Content will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <p>&copy; 2024 Thailand Tourism App | ข้อมูลจาก OpenStreetMap & AirVisual</p>
+    </div>
+  </footer>
+
+  <script>
+    function showAirQualityDetails(city, aqi, description) {
+      let levelColor = 'bg-green-100 text-green-800';
+      let levelIcon = '🟢';
+      
+      if (aqi > 50) {
+        levelColor = 'bg-yellow-100 text-yellow-800';
+        levelIcon = '🟡';
+      }
+      if (aqi > 100) {
+        levelColor = 'bg-orange-100 text-orange-800';
+        levelIcon = '🟠';
+      }
+      if (aqi > 200) {
+        levelColor = 'bg-red-100 text-red-800';
+        levelIcon = '🔴';
+      }
+      
+      const content = `
+        <div class="space-y-4">
+          <div class="text-center">
+            <div class="text-4xl mb-2">${levelIcon}</div>
+            <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${levelColor}">
+              AQI: ${aqi}
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <p><strong>📍 ตำแหน่ง:</strong> ${city}</p>
+            <p><strong>📊 ค่า AQI:</strong> ${aqi}</p>
+            <p><strong>ℹ️ คำอธิบาย:</strong> ${description}</p>
+          </div>
+          
+          <div class="bg-gray-50 p-3 rounded-lg text-sm">
+            <p class="font-medium mb-1">💡 คำแนะนำ:</p>
+            <p class="text-gray-700">${getHealthAdvice(aqi)}</p>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('airQualityContent').innerHTML = content;
+      document.getElementById('airQualityModal').classList.remove('hidden');
+      document.getElementById('airQualityModal').classList.add('flex');
+    }
+    
+    function closeAirQualityModal() {
+      document.getElementById('airQualityModal').classList.add('hidden');
+      document.getElementById('airQualityModal').classList.remove('flex');
+    }
+    
+    function getHealthAdvice(aqi) {
+      if (aqi <= 50) return 'อากาศดี เหมาะสำหรับกิจกรรมกลางแจ้งทุกประเภท';
+      if (aqi <= 100) return 'อากาศปานกลาง คนไวต่อมลพิษควรระวังเล็กน้อย';
+      if (aqi <= 150) return 'ไม่ดีสำหรับกลุ่มเสี่ยง คนไวต่อมลพิษควรหลีกเลี่ยงกิจกรรมกลางแจ้งที่หนัก';
+      if (aqi <= 200) return 'อากาศไม่ดี ทุกคนควรจำกัดกิจกรรมกลางแจ้ง';
+      return 'อากาศแย่มาก ควรหลีกเลี่ยงกิจกรรมกลางแจ้งทั้งหมด';
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('airQualityModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAirQualityModal();
+      }
+    });
+    
+    // Auto-focus on search input
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('province').focus();
+    });
+  </script>
+
+</body>
+</html>

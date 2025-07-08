@@ -1,0 +1,141 @@
+2025-07-08 19:16:28,878 - INFO - Application started
+2025-07-08 19:16:38,420 - INFO - Processing query for province: นครราชสีมา
+2025-07-08 19:16:38,420 - INFO - Fetching IQAir data for นครราชสีมา
+2025-07-08 19:16:38,420 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:39,767 - DEBUG - https://api.airvisual.com:443 "GET /v2/cities?state=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 400 54
+2025-07-08 19:16:39,767 - DEBUG - IQAir response for นครราชสีมา: {"status":"fail","data":{"message":"state_not_found"}}...
+2025-07-08 19:16:39,767 - ERROR - IQAir HTTP error: 400
+2025-07-08 19:16:39,767 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:41,004 - DEBUG - https://api.airvisual.com:443 "GET /v2/cities?state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 200 197
+2025-07-08 19:16:41,004 - DEBUG - IQAir response for Nakhon Ratchasima: {"status":"success","data":[{"city":"Bua Lai"},{"city":"Mu Si"},{"city":"Mueang"},{"city":"Nai Mueang"},{"city":"Nakhon Ratchasima"},{"city":"Pak Chong"},{"city":"Pong Ta Long"},{"city":"Sikhio"}]}...
+2025-07-08 19:16:41,004 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:42,142 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Bua%20Lai&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 200 366
+2025-07-08 19:16:42,142 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:43,720 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Mu%20Si&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 200 363
+2025-07-08 19:16:43,736 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:44,476 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Mueang&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 200 377
+2025-07-08 19:16:44,492 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:45,090 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Nai%20Mueang&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 429 56
+2025-07-08 19:16:45,106 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:45,847 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Nakhon%20Ratchasima&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 429 56
+2025-07-08 19:16:45,847 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:46,685 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Pak%20Chong&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 429 56
+2025-07-08 19:16:46,701 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:48,486 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Pong%20Ta%20Long&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 429 56
+2025-07-08 19:16:48,486 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:16:49,259 - DEBUG - https://api.airvisual.com:443 "GET /v2/city?city=Sikhio&state=Nakhon%20Ratchasima&country=Thailand&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 429 56
+2025-07-08 19:16:49,269 - INFO - Fetching Nominatim data for tourism in นครราชสีมา
+2025-07-08 19:16:50,271 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:16:51,166 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%5Btourism%5D+%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=12&addressdetails=1&extratags=1&countrycodes=TH&state=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2 HTTP/11" 400 165
+2025-07-08 19:16:51,167 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:16:51,169 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:16:51,171 - WARNING - No tourism places found for นครราชสีมา
+2025-07-08 19:26:14,720 - INFO - Application started
+2025-07-08 19:26:31,937 - INFO - Processing query for province: นครราชสีมา
+2025-07-08 19:26:31,937 - INFO - Fetching IQAir data for นครราชสีมา
+2025-07-08 19:26:31,953 - DEBUG - Starting new HTTPS connection (1): api.airvisual.com:443
+2025-07-08 19:26:32,495 - DEBUG - https://api.airvisual.com:443 "GET /v2/nearest_city?lat=14.97&lon=102.1&key=eeb3ba1c-2778-4b29-a766-30a21e6fa7c8 HTTP/11" 200 377
+2025-07-08 19:26:32,495 - DEBUG - IQAir response for นครราชสีมา: {"status":"success","data":{"city":"Mueang","state":"Nakhon Ratchasima","country":"Thailand","location":{"type":"Point","coordinates":[102.10219652705,14.976785802969]},"current":{"pollution":{"ts":"2025-07-08T12:00:00.000Z","aqius":41,"mainus":"p2","aqicn":11,"maincn":"p2"},"weather":{"ts":"2025-07-08T12:00:00.000Z","ic":"04n","hu":87,"pr":1006,"tp":31,"wd":206,"ws":3.6}}}}...
+2025-07-08 19:26:32,510 - INFO - Fetching Nominatim data for tourism in นครราชสีมา
+2025-07-08 19:26:33,513 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:26:34,643 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=12&addressdetails=1&extratags=1&countrycodes=TH&tourism=attraction HTTP/11" 200 1226
+2025-07-08 19:26:34,643 - DEBUG - Nominatim response: [{"place_id":237785209,"licence":"Data \xa9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright","osm_type":"relation","osm_id":17770565,"lat":"14.9747339","lon":"102.0981161","class":"boundary","type":"administrative","place_rank":14,"importance":0.5198607280948221,"addresstype":"city","name":"เทศบาลนครนครราชสีมา","display_name":"เทศบาลนครนครราชสีมา, บ้านใหม่, อำเภอเมืองนครราชสีมา, จังหวัดนครราชสีมา, 30000, ประเทศไทย","address":{"city":"เทศบาลนครนครราชสีมา","municipality":"บ้านใหม่","co...
+2025-07-08 19:26:34,659 - WARNING - No tourism places found for นครราชสีมา
+2025-07-08 19:26:49,665 - INFO - Processing query for province: นครราชสีมา
+2025-07-08 19:26:49,665 - INFO - Fetching Nominatim data for tourism in นครราชสีมา
+2025-07-08 19:26:50,681 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:26:51,437 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=6&addressdetails=1&extratags=1&countrycodes=TH&tourism=attraction HTTP/11" 200 1226
+2025-07-08 19:26:51,437 - DEBUG - Nominatim response: [{"place_id":237785209,"licence":"Data \xa9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright","osm_type":"relation","osm_id":17770565,"lat":"14.9747339","lon":"102.0981161","class":"boundary","type":"administrative","place_rank":14,"importance":0.5198607280948221,"addresstype":"city","name":"เทศบาลนครนครราชสีมา","display_name":"เทศบาลนครนครราชสีมา, บ้านใหม่, อำเภอเมืองนครราชสีมา, จังหวัดนครราชสีมา, 30000, ประเทศไทย","address":{"city":"เทศบาลนครนครราชสีมา","municipality":"บ้านใหม่","co...
+2025-07-08 19:26:51,437 - INFO - Fetching Nominatim data for hotel in นครราชสีมา
+2025-07-08 19:26:52,448 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:26:53,114 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=6&addressdetails=1&extratags=1&countrycodes=TH&amenity=hotel HTTP/11" 400 165
+2025-07-08 19:26:53,114 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:26:53,114 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:26:53,130 - INFO - Fetching Nominatim data for restaurant in นครราชสีมา
+2025-07-08 19:26:54,132 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:26:54,762 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=6&addressdetails=1&extratags=1&countrycodes=TH&amenity=restaurant HTTP/11" 400 165
+2025-07-08 19:26:54,762 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:26:54,762 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:26:54,762 - INFO - Fetching Nominatim data for shop in นครราชสีมา
+2025-07-08 19:26:55,774 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:26:56,426 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=4&addressdetails=1&extratags=1&countrycodes=TH&amenity=shop HTTP/11" 400 165
+2025-07-08 19:26:56,426 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:26:56,426 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:26:56,441 - INFO - Fetching Nominatim data for place_of_worship in นครราชสีมา
+2025-07-08 19:26:57,446 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:26:58,108 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=4&addressdetails=1&extratags=1&countrycodes=TH&amenity=place_of_worship HTTP/11" 400 165
+2025-07-08 19:26:58,108 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:26:58,108 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:26:58,124 - INFO - Fetching Open Data for นครราชสีมา
+2025-07-08 19:26:58,124 - DEBUG - Starting new HTTPS connection (1): opend.data.go.th:443
+2025-07-08 19:26:58,431 - DEBUG - https://opend.data.go.th:443 "GET /api/v2/datasets?q=tourism+%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2&api-key=YOUR_OPEN_DATA_API_KEY HTTP/11" 302 None
+2025-07-08 19:26:58,525 - DEBUG - https://opend.data.go.th:443 "GET /register_api?q=tourism+%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2&api-key=YOUR_OPEN_DATA_API_KEY HTTP/11" 301 None
+2025-07-08 19:26:58,634 - DEBUG - https://opend.data.go.th:443 "GET /register_api/?q=tourism+%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2&api-key=YOUR_OPEN_DATA_API_KEY HTTP/11" 200 None
+2025-07-08 19:26:58,650 - DEBUG - Open Data response: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+
+    ยินดีต้อนรับ - Open Government Data of Thailand
+
+    </title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="0386a6cf4dd4e55ffa945ac5a6d24a3e6853df76333d51341877addfe044f6a4" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="//netdna.boot...
+2025-07-08 19:26:58,650 - ERROR - Open Data error: Expecting value: line 1 column 1 (char 0)
+2025-07-08 19:26:58,650 - INFO - Completed search for all places
+2025-07-08 19:27:00,408 - INFO - Prompting user to continue
+2025-07-08 19:27:06,200 - WARNING - Non-numeric menu choice: 
+2025-07-08 19:27:14,915 - INFO - Processing query for province: นครราชสีมา
+2025-07-08 19:27:14,915 - INFO - Fetching Nominatim data for tourism in นครราชสีมา
+2025-07-08 19:27:15,927 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:27:16,672 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=6&addressdetails=1&extratags=1&countrycodes=TH&tourism=attraction HTTP/11" 200 1226
+2025-07-08 19:27:16,672 - DEBUG - Nominatim response: [{"place_id":237785209,"licence":"Data \xa9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright","osm_type":"relation","osm_id":17770565,"lat":"14.9747339","lon":"102.0981161","class":"boundary","type":"administrative","place_rank":14,"importance":0.5198607280948221,"addresstype":"city","name":"เทศบาลนครนครราชสีมา","display_name":"เทศบาลนครนครราชสีมา, บ้านใหม่, อำเภอเมืองนครราชสีมา, จังหวัดนครราชสีมา, 30000, ประเทศไทย","address":{"city":"เทศบาลนครนครราชสีมา","municipality":"บ้านใหม่","co...
+2025-07-08 19:27:16,672 - INFO - Fetching Nominatim data for hotel in นครราชสีมา
+2025-07-08 19:27:17,684 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:27:18,330 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=6&addressdetails=1&extratags=1&countrycodes=TH&amenity=hotel HTTP/11" 400 165
+2025-07-08 19:27:18,330 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:27:18,330 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:27:18,330 - INFO - Fetching Nominatim data for restaurant in นครราชสีมา
+2025-07-08 19:27:19,339 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:27:19,974 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=6&addressdetails=1&extratags=1&countrycodes=TH&amenity=restaurant HTTP/11" 400 165
+2025-07-08 19:27:19,974 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:27:19,974 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:27:19,974 - INFO - Fetching Nominatim data for shop in นครราชสีมา
+2025-07-08 19:27:20,986 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:27:21,784 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=4&addressdetails=1&extratags=1&countrycodes=TH&amenity=shop HTTP/11" 400 165
+2025-07-08 19:27:21,784 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:27:21,784 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:27:21,784 - INFO - Fetching Nominatim data for place_of_worship in นครราชสีมา
+2025-07-08 19:27:22,795 - DEBUG - Starting new HTTPS connection (1): nominatim.openstreetmap.org:443
+2025-07-08 19:27:23,441 - DEBUG - https://nominatim.openstreetmap.org:443 "GET /search?q=%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2%2C+Thailand&format=json&limit=4&addressdetails=1&extratags=1&countrycodes=TH&amenity=place_of_worship HTTP/11" 400 165
+2025-07-08 19:27:23,441 - DEBUG - Nominatim response: {"error":{"code":400,"message":"Structured query parameters(amenity, street, city, county, state, postalcode, country) cannot be used together with 'q' parameter."}}...
+2025-07-08 19:27:23,441 - ERROR - Nominatim HTTP error: 400
+2025-07-08 19:27:23,441 - INFO - Fetching Open Data for นครราชสีมา
+2025-07-08 19:27:23,441 - DEBUG - Starting new HTTPS connection (1): opend.data.go.th:443
+2025-07-08 19:27:23,659 - DEBUG - https://opend.data.go.th:443 "GET /api/v2/datasets?q=tourism+%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2&api-key=YOUR_OPEN_DATA_API_KEY HTTP/11" 302 None
+2025-07-08 19:27:23,936 - DEBUG - https://opend.data.go.th:443 "GET /register_api?q=tourism+%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2&api-key=YOUR_OPEN_DATA_API_KEY HTTP/11" 301 None
+2025-07-08 19:27:24,123 - DEBUG - https://opend.data.go.th:443 "GET /register_api/?q=tourism+%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AA%E0%B8%B5%E0%B8%A1%E0%B8%B2&api-key=YOUR_OPEN_DATA_API_KEY HTTP/11" 200 None
+2025-07-08 19:27:24,139 - DEBUG - Open Data response: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+
+    ยินดีต้อนรับ - Open Government Data of Thailand
+
+    </title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="6b3c8930e12bb2fe2e99a43fcd12dba4c335b7203e0ec9ba9b6b27a34fe4b0c8" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="//netdna.boot...
+2025-07-08 19:27:24,139 - ERROR - Open Data error: Expecting value: line 1 column 1 (char 0)
+2025-07-08 19:27:24,139 - INFO - Completed search for all places
