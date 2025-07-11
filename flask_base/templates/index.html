@@ -31,10 +31,14 @@
     .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     .pulse-animation { animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    .air-quality-good { background: linear-gradient(135deg, #4ade80, #22c55e); }
-    .air-quality-moderate { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
-    .air-quality-poor { background: linear-gradient(135deg, #f87171, #ef4444); }
-    .air-quality-bad { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+    /* Air Quality Colors */
+    .air-quality-good { background: linear-gradient(135deg, #4ade80, #22c55e); } /* Green */
+    .air-quality-moderate { background: linear-gradient(135deg, #fbbf24, #f59e0b); } /* Yellow */
+    .air-quality-unhealthy-sensitive { background: linear-gradient(135deg, #f87171, #ef4444); } /* Orange/Red for sensitive groups */
+    .air-quality-unhealthy { background: linear-gradient(135deg, #a78bfa, #8b5cf6); } /* Purple */
+    .air-quality-very-unhealthy { background: linear-gradient(135deg, #ef4444, #dc2626); } /* Dark Red */
+    .air-quality-hazardous { background: linear-gradient(135deg, #881337, #4c0519); } /* Darker Red/Brown */
+
     .loading-spinner { border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
@@ -54,25 +58,123 @@
     
     <!-- Search Form -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <form method="POST" class="flex flex-col sm:flex-row items-center gap-4">
-        <div class="flex-1 w-full">
-          <label for="province" class="block text-sm font-medium text-gray-700 mb-2">ชื่อจังหวัด</label>
-          <input 
-            name="province" 
-            id="province"
-            value="{{ province }}" 
-            placeholder="เช่น เชียงใหม่, โคราช, ภูเก็ต, กรุงเทพมหานคร..." 
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-          />
+      <form method="POST" class="flex flex-col gap-4">
+        <div class="flex flex-col sm:flex-row items-end gap-4">
+          <div class="flex-1 w-full">
+            <label for="province" class="block text-sm font-medium text-gray-700 mb-2">ชื่อจังหวัด</label>
+            <input 
+              name="province" 
+              id="province"
+              value="{{ province }}" 
+              placeholder="เช่น เชียงใหม่, โคราช, ภูเก็ต, กรุงเทพมหานคร..." 
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+          </div>
+          <div class="w-full sm:w-auto">
+            <label for="sort_by_dust" class="block text-sm font-medium text-gray-700 mb-2">จัดเรียงตามค่าฝุ่น</label>
+            <select 
+              name="sort_by_dust" 
+              id="sort_by_dust"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="aqius" {% if sort_by_dust == 'aqius' %}selected{% endif %}>AQI (US)</option>
+              <option value="pm25" {% if sort_by_dust == 'pm25' %}selected{% endif %}>PM2.5</option>
+              <option value="pm10" {% if sort_by_dust == 'pm10' %}selected{% endif %}>PM10</option>
+            </select>
+          </div>
+          <div class="w-full sm:w-auto">
+            <button 
+              type="submit" 
+              class="w-full sm:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+            >
+              🔍 ค้นหา
+            </button>
+          </div>
         </div>
-        <div class="w-full sm:w-auto">
-          <button 
-            type="submit" 
-            class="w-full sm:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
-          >
-            🔍 ค้นหา
-          </button>
+        
+        <!-- Time Series Options -->
+        <div class="border-t pt-4">
+          <div class="flex flex-col sm:flex-row items-end gap-4">
+            <div class="flex items-center">
+              <input 
+                type="checkbox" 
+                name="enable_time_series" 
+                id="enable_time_series"
+                value="true"
+                {% if enable_time_series %}checked{% endif %}
+                class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                onchange="toggleTimeSeriesOptions()"
+              />
+              <label for="enable_time_series" class="text-sm font-medium text-gray-700">เปิดใช้งาน Time Series</label>
+            </div>
+            
+            <div id="timeSeriesOptions" class="flex flex-col sm:flex-row gap-4 {% if not enable_time_series %}hidden{% endif %}">
+              <div>
+                <label for="time_mode" class="block text-sm font-medium text-gray-700 mb-1">โหมดเวลา</label>
+                <select 
+                  name="time_mode" 
+                  id="time_mode"
+                  class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  onchange="toggleTimeMode()"
+                >
+                  <option value="historical" {% if time_mode == 'historical' or not time_mode %}selected{% endif %}>ข้อมูลย้อนหลัง</option>
+                  <option value="forecast" {% if time_mode == 'forecast' %}selected{% endif %}>พยากรณ์อากาศ</option>
+                  <option value="custom" {% if time_mode == 'custom' %}selected{% endif %}>กำหนดเอง</option>
+                </select>
+              </div>
+              
+              <div id="historicalOptions" class="flex gap-4 {% if time_mode == 'forecast' %}hidden{% endif %}">
+                <div>
+                  <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">วันที่เริ่มต้น</label>
+                  <input 
+                    type="date" 
+                    name="start_date" 
+                    id="start_date"
+                    value="{{ start_date or '' }}"
+                    class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                </div>
+                
+                <div>
+                  <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">วันที่สิ้นสุด</label>
+                  <input 
+                    type="date" 
+                    name="end_date" 
+                    id="end_date"
+                    value="{{ end_date or '' }}"
+                    class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                </div>
+              </div>
+              
+              <div id="forecastOptions" class="{% if time_mode != 'forecast' %}hidden{% endif %}">
+                <label for="forecast_days" class="block text-sm font-medium text-gray-700 mb-1">จำนวนวันพยากรณ์</label>
+                <select 
+                  name="forecast_days" 
+                  id="forecast_days"
+                  class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                >
+                  <option value="3" {% if forecast_days == '3' %}selected{% endif %}>3 วัน</option>
+                  <option value="5" {% if forecast_days == '5' %}selected{% endif %}>5 วัน</option>
+                  <option value="7" {% if forecast_days == '7' %}selected{% endif %}>7 วัน</option>
+                </select>
+              </div>
+              
+              <div>
+                <label for="time_interval" class="block text-sm font-medium text-gray-700 mb-1">ช่วงเวลา</label>
+                <select 
+                  name="time_interval" 
+                  id="time_interval"
+                  class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                >
+                  <option value="daily" {% if time_interval == 'daily' %}selected{% endif %}>รายวัน</option>
+                  <option value="weekly" {% if time_interval == 'weekly' %}selected{% endif %}>รายสัปดาห์</option>
+                  <option value="monthly" {% if time_interval == 'monthly' %}selected{% endif %}>รายเดือน</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -111,36 +213,93 @@
     {% if results.tourism %}
     <div class="mb-8">
       <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-        🏛️ สถานที่ท่องเที่ยว
+        🏛️ สถานที่ท่องเที่ยว (รวมวัด/ศาสนสถาน)
         <span class="ml-2 bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full">{{ results.tourism|length }}</span>
       </h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {# --- Custom ranking logic for medals --- #}
+        {% set last_value = None %}
+        {% set rank = 0 %}
+        {% set shown = 0 %}
         {% for place in results.tourism %}
         <div class="bg-white rounded-lg shadow-md card-hover overflow-hidden">
           <div class="p-6">
-            <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ place.name }}</h4>
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ place.name or 'ไม่ระบุ' }}</h4>
             
             <!-- Air Quality Badge -->
             {% if place.air_quality %}
-            <div class="mb-3">
+            <div class="mb-3 flex flex-wrap gap-2">
               {% set aqi = place.air_quality.aqi %}
-              {% if aqi <= 50 %}
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  🟢 อากาศดี ({{ aqi }})
-                </span>
-              {% elif aqi <= 100 %}
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                  🟡 ปานกลาง ({{ aqi }})
-                </span>
-              {% elif aqi <= 200 %}
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                  🟠 ไม่ดี ({{ aqi }})
-                </span>
+              {% set pm25 = place.air_quality.pm25 %}
+              {% set pm10 = place.air_quality.pm10 %}
+              
+              {% set aqi_level_class = 'air-quality-good' %}
+              {% set aqi_level_icon = '🟢' %}
+
+              {% if aqi > 200 %}
+                {% set aqi_level_class = 'air-quality-hazardous' %}
+                {% set aqi_level_icon = '⚫' %}
+              {% elif aqi > 150 %}
+                {% set aqi_level_class = 'air-quality-unhealthy' %}
+                {% set aqi_level_icon = '🔴' %}
+              {% elif aqi > 100 %}
+                {% set aqi_level_class = 'air-quality-unhealthy-sensitive' %}
+                {% set aqi_level_icon = '🟠' %}
+              {% elif aqi > 50 %}
+                {% set aqi_level_class = 'air-quality-moderate' %}
+                {% set aqi_level_icon = '🟡' %}
+              {% endif %}
+
+              {# --- Custom medal logic --- #}
+              {% set value = aqi %}
+              {% if sort_by_dust == 'pm25' %}
+                {% set value = pm25 %}
+              {% elif sort_by_dust == 'pm10' %}
+                {% set value = pm10 %}
+              {% endif %}
+              {% if value != last_value and value is not none %}
+                {% set rank = rank + 1 %}
+                {% set last_value = value %}
+              {% endif %}
+              {% set rank_icon = '' %}
+              {% if rank == 1 %}
+                {% set rank_icon = '🥇' %}
+              {% elif rank == 2 %}
+                {% set rank_icon = '🥈' %}
+              {% elif rank == 3 %}
+                {% set rank_icon = '🥉' %}
+              {% endif %}
+
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ aqi_level_class }}">
+                {% if sort_by_dust == 'aqius' %}
+                  {{ aqi_level_icon }} AQI: {{ aqi or 'ไม่ระบุ' }}
+                {% elif sort_by_dust == 'pm25' %}
+                  {{ aqi_level_icon }} PM2.5: {{ pm25 or 'ไม่ระบุ' }}
+                {% elif sort_by_dust == 'pm10' %}
+                  {{ aqi_level_icon }} PM10: {{ pm10 or 'ไม่ระบุ' }}
+                {% endif %}
+                {% if sort_by_dust == 'aqius' and rank <= 3 and rank_icon %}<span class="ml-1">{{ rank_icon }}</span>{% endif %}
+              </span>
+              {% if pm25 %}
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                PM2.5: {{ pm25 or 'ไม่ระบุ' }}
+                {% if sort_by_dust == 'pm25' and rank <= 3 and rank_icon %}<span class="ml-1">{{ rank_icon }}</span>{% endif %}
+              </span>
               {% else %}
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  🔴 แย่มาก ({{ aqi }})
-                </span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                PM2.5: ไม่ระบุ
+              </span>
+              {% endif %}
+              {% if pm10 %}
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                PM10: {{ pm10 or 'ไม่ระบุ' }}
+                {% if sort_by_dust == 'pm10' and rank <= 3 and rank_icon %}<span class="ml-1">{{ rank_icon }}</span>{% endif %}
+              </span>
+              {% else %}
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                PM10: ไม่ระบุ
+              </span>
               {% endif %}
             </div>
             {% endif %}
@@ -148,7 +307,7 @@
             <div class="space-y-2 text-sm text-gray-600">
               <p class="flex items-start">
                 <span class="font-medium text-gray-800 mr-2">📍 ที่อยู่:</span>
-                <span>{{ place.full_address }}</span>
+                <span>{{ place.full_address or 'ไม่ระบุ' }}</span>
               </p>
               
               <p class="flex items-center">
@@ -159,7 +318,12 @@
               {% if place.type %}
               <p class="flex items-center">
                 <span class="font-medium text-gray-800 mr-2">🏷️ ประเภท:</span>
-                <span>{{ place.type }}</span>
+                <span>{{ place.type or 'ไม่ระบุ' }}</span>
+              </p>
+              {% else %}
+              <p class="flex items-center">
+                <span class="font-medium text-gray-800 mr-2">🏷️ ประเภท:</span>
+                <span>ไม่ระบุ</span>
               </p>
               {% endif %}
             </div>
@@ -174,9 +338,18 @@
               </a>
               
               {% if place.air_quality %}
+              {% set air_city = place.air_quality.city or 'ไม่ระบุ' %}
+              {% set air_aqi = place.air_quality.aqi or 0 %}
+              {% set air_desc = place.air_quality.description or 'ไม่ระบุ' %}
+              {% set air_pm25 = place.air_quality.pm25 or 0 %}
+              {% set air_pm10 = place.air_quality.pm10 or 0 %}
               <button 
-                onclick="showAirQualityDetails('{{ place.air_quality.city }}', {{ place.air_quality.aqi }}, '{{ place.air_quality.description }}')"
-                class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors air-quality-btn"
+                data-city="{{ air_city }}"
+                data-aqi="{{ air_aqi }}"
+                data-description="{{ air_desc }}"
+                data-pm25="{{ air_pm25 }}"
+                data-pm10="{{ air_pm10 }}"
               >
                 🌬️ ข้อมูลอากาศ
               </button>
@@ -189,12 +362,164 @@
     </div>
     {% endif %}
 
+    <!-- Time Series Analysis Results -->
+    {% if results.time_series and results.time_series.enabled %}
+    <div class="mb-8">
+      {% if results.time_series.error %}
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+        <h3 class="text-xl font-bold text-red-800 mb-2">❌ Time Series Analysis Error</h3>
+        <p class="text-red-700">{{ results.time_series.error }}</p>
+      </div>
+      {% elif results.time_series.analysis %}
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+          📊 การวิเคราะห์ Time Series
+          {% if results.time_series.mode == 'forecast' %}
+          <span class="ml-2 bg-purple-100 text-purple-800 text-sm px-2 py-1 rounded-full">
+            🔮 พยากรณ์ {{ results.time_series.forecast_days }} วัน
+          </span>
+          {% else %}
+          <span class="ml-2 bg-purple-100 text-purple-800 text-sm px-2 py-1 rounded-full">
+            {{ results.time_series.start_date }} ถึง {{ results.time_series.end_date }}
+          </span>
+          {% endif %}
+        </h3>
+        
+        {% set analysis = results.time_series.analysis %}
+        {% if analysis.rankings %}
+        {% if results.time_series.mode == 'forecast' %}
+        <div class="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
+          <div class="flex items-center">
+            <div class="text-amber-600 mr-2">🔮</div>
+            <p class="text-amber-800 text-sm font-medium">
+              ข้อมูลพยากรณ์อากาศ - เป็นการคาดการณ์จากข้อมูลปัจจุบันและแบบจำลองทางสถิติ
+            </p>
+          </div>
+        </div>
+        {% elif results.time_series.mode == 'historical' %}
+        <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div class="flex items-center">
+            <div class="text-blue-600 mr-2">📊</div>
+            <p class="text-blue-800 text-sm font-medium">
+              ข้อมูลย้อนหลัง - รวมข้อมูลจริงและข้อมูลจำลองที่ใช้โมเดลทางสถิติ 
+              {% if results.time_series.real_data_count %}
+              (ข้อมูลจริง: {{ results.time_series.real_data_count }} รายการ)
+              {% endif %}
+            </p>
+          </div>
+        </div>
+        {% else %}
+        <div class="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
+          <div class="flex items-center">
+            <div class="text-green-600 mr-2">✅</div>
+            <p class="text-green-800 text-sm font-medium">
+              ข้อมูลผสม - รวมข้อมูลจริงและข้อมูลจำลองตามช่วงเวลาที่เลือก
+            </p>
+          </div>
+        </div>
+        {% endif %}
+        
+        <div class="mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+              <div class="text-green-600 text-2xl mb-1">🏆</div>
+              <p class="text-sm text-green-600 font-medium">สถานที่ดีที่สุด</p>
+              <p class="text-green-800 font-bold">{{ analysis.best_place.name if analysis.best_place else 'ไม่ระบุ' }}</p>
+              {% if analysis.best_place %}
+              <p class="text-green-700 text-sm">เฉลี่ย: {{ analysis.best_place.average }}</p>
+              {% endif %}
+            </div>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+              <div class="text-blue-600 text-2xl mb-1">📈</div>
+              <p class="text-sm text-blue-600 font-medium">จำนวนสถานที่</p>
+              <p class="text-blue-800 font-bold">{{ analysis.total_places }}</p>
+              {% if results.time_series.mode == 'forecast' %}
+              <p class="text-blue-700 text-sm">พยากรณ์: {{ results.time_series.forecast_days }} วัน</p>
+              {% else %}
+              <p class="text-blue-700 text-sm">ช่วงเวลา: {{ results.time_series.interval }}</p>
+              {% endif %}
+            </div>
+            
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+              <div class="text-red-600 text-2xl mb-1">⚠️</div>
+              <p class="text-sm text-red-600 font-medium">สถานที่แย่ที่สุด</p>
+              <p class="text-red-800 font-bold">{{ analysis.worst_place.name if analysis.worst_place else 'ไม่ระบุ' }}</p>
+              {% if analysis.worst_place %}
+              <p class="text-red-700 text-sm">เฉลี่ย: {{ analysis.worst_place.average }}</p>
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Data Quality Statistics -->
+          {% if results.time_series.data_statistics %}
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-2">📊 สถิติคุณภาพข้อมูล</h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div class="text-center">
+                <div class="text-blue-600 font-bold">{{ results.time_series.data_statistics.total_records }}</div>
+                <div class="text-gray-600">รายการทั้งหมด</div>
+              </div>
+              <div class="text-center">
+                <div class="text-green-600 font-bold">{{ results.time_series.data_statistics.real_data_count }}</div>
+                <div class="text-gray-600">ข้อมูลจริง</div>
+              </div>
+              <div class="text-center">
+                <div class="text-amber-600 font-bold">{{ results.time_series.data_statistics.cached_data_count }}</div>
+                <div class="text-gray-600">ข้อมูล Cache</div>
+              </div>
+              <div class="text-center">
+                <div class="text-purple-600 font-bold">{{ results.time_series.data_statistics.simulated_data_count }}</div>
+                <div class="text-gray-600">ข้อมูลจำลอง</div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {% for place in analysis.rankings %}
+          <div class="bg-gray-50 rounded-lg p-4 border">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="font-semibold text-gray-800">
+                {{ place.medal }} {{ place.rank }}. {{ place.name }}
+              </h4>
+              <span class="text-sm text-gray-600">{{ place.city }}</span>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4 text-sm">
+              <div class="text-center">
+                <p class="text-gray-600">ค่าเฉลี่ย</p>
+                <p class="font-bold text-blue-600">{{ place.average }}</p>
+              </div>
+              <div class="text-center">
+                <p class="text-gray-600">ต่ำสุด</p>
+                <p class="font-bold text-green-600">{{ place.minimum }}</p>
+              </div>
+              <div class="text-center">
+                <p class="text-gray-600">สูงสุด</p>
+                <p class="font-bold text-red-600">{{ place.maximum }}</p>
+              </div>
+            </div>
+            
+            <div class="mt-2 text-xs text-gray-500">
+              จำนวนข้อมูล: {{ place.data_points }} จุด
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
     <!-- Other Categories -->
+    {# "วัด/ศาสนสถาน" is now part of tourism, so removed from here #}
     {% for category, places in {
       "โรงแรม": results.hotels,
       "ร้านอาหาร": results.restaurants,
-      "ศูนย์การค้า": results.shopping,
-      "วัด/ศาสนสถาน": results.temples,
+      "ศูนย์การค้า": results.shopping
     }.items() %}
     
     {% if places %}
@@ -203,15 +528,82 @@
         {% if category == "โรงแรม" %}🏨{% endif %}
         {% if category == "ร้านอาหาร" %}🍽️{% endif %}
         {% if category == "ศูนย์การค้า" %}🛍️{% endif %}
-        {% if category == "วัด/ศาสนสถาน" %}🙏{% endif %}
         {{ category }}
         <span class="ml-2 bg-gray-100 text-gray-800 text-sm px-2 py-1 rounded-full">{{ places|length }}</span>
       </h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {# --- Custom ranking logic for medals --- #}
+        {% set last_value = None %}
+        {% set rank = 0 %}
+        {% set shown = 0 %}
         {% for place in places %}
         <div class="bg-white rounded-lg shadow-md card-hover p-4">
           <h4 class="font-semibold text-gray-800 mb-2">{{ place.name }}</h4>
+          
+          {% if place.air_quality %}
+          <div class="mb-3 flex flex-wrap gap-2">
+            {% set aqi = place.air_quality.aqi %}
+            {% set pm25 = place.air_quality.pm25 %}
+            {% set pm10 = place.air_quality.pm10 %}
+            {% set aqi_level_class = 'air-quality-good' %}
+            {% set aqi_level_icon = '🟢' %}
+            {% if aqi > 200 %}
+              {% set aqi_level_class = 'air-quality-hazardous' %}
+              {% set aqi_level_icon = '⚫' %}
+            {% elif aqi > 150 %}
+              {% set aqi_level_class = 'air-quality-unhealthy' %}
+              {% set aqi_level_icon = '🔴' %}
+            {% elif aqi > 100 %}
+              {% set aqi_level_class = 'air-quality-unhealthy-sensitive' %}
+              {% set aqi_level_icon = '🟠' %}
+            {% elif aqi > 50 %}
+              {% set aqi_level_class = 'air-quality-moderate' %}
+              {% set aqi_level_icon = '🟡' %}
+            {% endif %}
+            {# --- Custom medal logic --- #}
+            {% set value = aqi %}
+            {% if sort_by_dust == 'pm25' %}
+              {% set value = pm25 %}
+            {% elif sort_by_dust == 'pm10' %}
+              {% set value = pm10 %}
+            {% endif %}
+            {% if value != last_value and value is not none %}
+              {% set rank = rank + 1 %}
+              {% set last_value = value %}
+            {% endif %}
+            {% set rank_icon = '' %}
+            {% if rank == 1 %}
+              {% set rank_icon = '🥇' %}
+            {% elif rank == 2 %}
+              {% set rank_icon = '🥈' %}
+            {% elif rank == 3 %}
+              {% set rank_icon = '🥉' %}
+            {% endif %}
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ aqi_level_class }}">
+              {% if sort_by_dust == 'aqius' %}
+                {{ aqi_level_icon }} AQI: {{ aqi }}
+              {% elif sort_by_dust == 'pm25' %}
+                {{ aqi_level_icon }} PM2.5: {{ pm25 }}
+              {% elif sort_by_dust == 'pm10' %}
+                {{ aqi_level_icon }} PM10: {{ pm10 }}
+              {% endif %}
+              {% if rank <= 3 and rank_icon %}<span class="ml-1">{{ rank_icon }}</span>{% endif %}
+            </span>
+            {% if pm25 %}
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              PM2.5: {{ pm25 }}
+              {% if sort_by_dust == 'pm25' and rank <= 3 and rank_icon %}<span class="ml-1">{{ rank_icon }}</span>{% endif %}
+            </span>
+            {% endif %}
+            {% if pm10 %}
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+              PM10: {{ pm10 }}
+              {% if sort_by_dust == 'pm10' and rank <= 3 and rank_icon %}<span class="ml-1">{{ rank_icon }}</span>{% endif %}
+            </span>
+            {% endif %}
+          </div>
+          {% endif %}
           
           <div class="space-y-1 text-sm text-gray-600">
             <p class="flex items-start">
@@ -244,7 +636,7 @@
     {% endfor %}
 
     <!-- No Results Message -->
-    {% if province and not results.tourism and not results.hotels and not results.restaurants and not results.temples and not results.shopping %}
+    {% if province and not results.tourism and not results.hotels and not results.restaurants and not results.shopping %}
     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
       <div class="text-yellow-600 text-6xl mb-4">🔍</div>
       <h3 class="text-xl font-semibold text-yellow-800 mb-2">ไม่พบข้อมูล</h3>
@@ -300,35 +692,82 @@
   </footer>
 
   <script>
-    function showAirQualityDetails(city, aqi, description) {
-      let levelColor = 'bg-green-100 text-green-800';
-      let levelIcon = '🟢';
+    function toggleTimeSeriesOptions() {
+      const checkbox = document.getElementById('enable_time_series');
+      const options = document.getElementById('timeSeriesOptions');
       
-      if (aqi > 50) {
-        levelColor = 'bg-yellow-100 text-yellow-800';
-        levelIcon = '🟡';
+      if (checkbox.checked) {
+        options.classList.remove('hidden');
+        // Set default dates if not already set
+        const today = new Date().toISOString().split('T')[0];
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        if (!document.getElementById('start_date').value) {
+          document.getElementById('start_date').value = weekAgo;
+        }
+        if (!document.getElementById('end_date').value) {
+          document.getElementById('end_date').value = today;
+        }
+      } else {
+        options.classList.add('hidden');
       }
-      if (aqi > 100) {
-        levelColor = 'bg-orange-100 text-orange-800';
-        levelIcon = '🟠';
+    }
+    
+    function toggleTimeMode() {
+      const timeMode = document.getElementById('time_mode').value;
+      const historicalOptions = document.getElementById('historicalOptions');
+      const forecastOptions = document.getElementById('forecastOptions');
+      
+      if (timeMode === 'forecast') {
+        historicalOptions.classList.add('hidden');
+        forecastOptions.classList.remove('hidden');
+      } else {
+        historicalOptions.classList.remove('hidden');
+        forecastOptions.classList.add('hidden');
+        
+        if (timeMode === 'historical') {
+          // Set default historical dates
+          const today = new Date().toISOString().split('T')[0];
+          const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+          
+          document.getElementById('start_date').value = weekAgo;
+          document.getElementById('end_date').value = today;
+        }
       }
+    }
+    
+    function showAirQualityDetails(city, aqi, description, pm25, pm10) {
+      let aqiLevelClass = 'air-quality-good';
+      let aqiLevelIcon = '🟢';
+      
       if (aqi > 200) {
-        levelColor = 'bg-red-100 text-red-800';
-        levelIcon = '🔴';
+        aqiLevelClass = 'air-quality-hazardous';
+        aqiLevelIcon = '⚫';
+      } else if (aqi > 150) {
+        aqiLevelClass = 'air-quality-unhealthy';
+        aqiLevelIcon = '🔴';
+      } else if (aqi > 100) {
+        aqiLevelClass = 'air-quality-unhealthy-sensitive';
+        aqiLevelIcon = '🟠';
+      } else if (aqi > 50) {
+        aqiLevelClass = 'air-quality-moderate';
+        aqiLevelIcon = '🟡';
       }
       
       const content = `
         <div class="space-y-4">
           <div class="text-center">
-            <div class="text-4xl mb-2">${levelIcon}</div>
-            <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${levelColor}">
+            <div class="text-4xl mb-2">${aqiLevelIcon}</div>
+            <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${aqiLevelClass}">
               AQI: ${aqi}
             </div>
           </div>
           
           <div class="space-y-2">
             <p><strong>📍 ตำแหน่ง:</strong> ${city}</p>
-            <p><strong>📊 ค่า AQI:</strong> ${aqi}</p>
+            <p><strong>📊 ค่า AQI (US):</strong> ${aqi}</p>
+            ${pm25 ? `<p><strong>💨 PM2.5:</strong> ${pm25}</p>` : ''}
+            ${pm10 ? `<p><strong>💨 PM10:</strong> ${pm10}</p>` : ''}
             <p><strong>ℹ️ คำอธิบาย:</strong> ${description}</p>
           </div>
           
@@ -367,6 +806,19 @@
     // Auto-focus on search input
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('province').focus();
+      
+      // Add event listeners for air quality buttons
+      document.querySelectorAll('.air-quality-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const city = this.dataset.city || 'ไม่ระบุ';
+          const aqi = parseInt(this.dataset.aqi) || 0;
+          const description = this.dataset.description || 'ไม่ระบุ';
+          const pm25 = parseInt(this.dataset.pm25) || 0;
+          const pm10 = parseInt(this.dataset.pm10) || 0;
+          
+          showAirQualityDetails(city, aqi, description, pm25, pm10);
+        });
+      });
     });
   </script>
 
