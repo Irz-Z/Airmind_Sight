@@ -39,10 +39,7 @@ def index(province=None):
         results["temples"] = get_nominatim_places(province, "place of worship", 3)
         results["opendata"] = get_thailand_open_data(province)
 
-    # handle quert parameters
-    page = request.args.get("page", "weather") # page default to weather
-    print(f'page = {page}')
-    return render_template("index.html", province=province, results=results, datetime=datetime, weather=weather, page=page)
+    return render_template("index.html", province=province, results=results, datetime=datetime, weather=weather)
 
 if __name__ == "__main__":
     app.run(debug=True)

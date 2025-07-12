@@ -1,116 +1,96 @@
-<html lang="th_TH">
-    <head>
-        <title>Airmind Sight</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
-    </head>
-    <body>
-        <nav class="bg-white drop-shadow-2xl h-20 p-4">
-            <div class="h-auto flex justify-between items-center pl-10 pr-10">
-                <a href="{{url_for('index')}}">
-                    <div class="h-auto w-auto flex items-center gap-3">
-                        <img class="h-auto size-12" src="{{url_for('static', filename='img/logo.png')}}" alt="logo">
-                        <p class="h-auto font-[Gabarito] text-2xl font-bold">AIRMIND SIGHT</p>
-                    </div>
-                </a>
-                <ul class="h-auto flex list-none gap-5">
-                    <li class="p-2 rounded-2xl hover:text-gray-500 hover:ease-in-out duration-200"><a href="">for Business</a></li>
-                    <li class="p-2 rounded-2xl hover:text-gray-500 hover:ease-in-out duration-200"><a href="">Log in</a></li>
-                    <li class="p-2 rounded-2xl hover:text-gray-500 hover:ease-in-out duration-200"><a href="">Sign up</a></li>
-                </ul>
-            </div>
-        </nav>
-            
-        <div class="relative w-full h-full flex flex-col text-black p-15 bg-white-500 bg-[url({{url_for('static',filename='img/sunny.jpg')}})] bg-blend-lighten bg-center bg-cover">
-            <div class="flex justify-center items-center mb-4">
-                <form method="POST" class="flex p-4 items-center justify-center w-150 bg-white rounded-4xl">
-                    <input name="province" value="{{ province }}" placeholder="ใส่ชื่อสถานที่..." class="w-full"/>
-                    <button type="submit" class="w-20">ค้นหา</button>
-                </form>
-            </div>
-            {% if province %}
-            <div class="text-bold text-xl font-[Gabarito] mb-4">
-                <div class="text-bold text-xl font-[Gabarito] mb-4">
-                    <form method="get" class="inline">
-                        {% if page == 'weather' %}
-                            <button type="submit" name="page" value="weather" class="font-bold hover:text-white duration-200">Weather</button> |
-                            <button type="submit" name="page" value="air" class="hover:text-white duration-200">Air Quality</button>
-                        {% else %}
-                            <button type="submit" name="page" value="weather" class="hover:text-white duration-200">Weather</button> |
-                            <button type="submit" name="page" value="air" class="font-bold hover:text-white duration-200">Air Quality</button>
-                        {% endif %}
-                    </form>
-                </div>
-            </div>
+{% extends 'base.html' %}
 
-            <div class="flex w-auto">
-                <div class="flex">
-                    <img src="{{url_for('static',filename='img/sun.png')}}" alt="sunny" class="size-48 mb-4 p-5">
+{% block header %}
+<script>
+    // import value from flask
+    const weatherData = JSON.parse("{{ weather|safe }}".replace(/'/g, '"'));
+    const results = JSON.parse("{{ results|safe }}".replace(/'/g, '"'));
+    const province = "{{ province }}";
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector('#location').innerHTML = `${weatherData.data.city}, Thailand`;
+        document.querySelector('#weatherHead').innerHTML = weatherData.data.current.weather.tp;
+        document.querySelector('#unit').innerHTML = "°C";
+        document.querySelector('#humidity').innerHTML = `Humidity: ${weatherData.data.current.weather.hu}%`;
+        document.querySelector('#pressure').innerHTML = `Pressure: ${weatherData.data.current.weather.pr} hPa`;
+        document.querySelector('#windSpeed').innerHTML = `Wind Speed: ${weatherData.data.current.weather.ws} m/s`;
+        document.querySelector('#windDirection').innerHTML = `Wind Direction: ${weatherData.data.current.weather.wd}°`;
+
+        // Add handlers for both buttons
+        document.querySelector('#weatherBtn').onclick = function() {
+            document.querySelector('#weatherHead').innerHTML = weatherData.data.current.weather.tp;
+            document.querySelector('#unit').innerHTML = "°C";
+        }
+        document.querySelector('#aqiBtn').onclick = function() {
+            document.querySelector('#weatherHead').innerHTML = weatherData.data.current.pollution.aqius;
+            document.querySelector('#unit').innerHTML = "AQI";
+    } 
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+    <div class="relative w-full h-full flex flex-col text-black p-15 bg-white-500 bg-[url({{url_for('static',filename='img/sunny.jpg')}})] bg-blend-lighten bg-center bg-cover">
+        <div class="flex justify-center items-center mb-4">
+            <form method="POST" class="flex p-4 items-center justify-center w-150 bg-white rounded-4xl">
+                <input name="province" value="{{ province }}" placeholder="ใส่ชื่อสถานที่..." class="w-full"/>
+                <button type="submit" class="w-20">ค้นหา</button>
+            </form>
+        </div>
+        <div class="text-bold text-xl font-[Gabarito] mb-4">
+            <div class="text-bold text-xl font-[Gabarito] mb-4">
+                <button id="weatherBtn" type="submit" name="page" class="font-bold hover:text-white duration-200">Weather</button> |
+                <button id="aqiBtn" type="submit" name="page" class="hover:text-white duration-200">Air Quality</button>
+            </div>
+        </div>
+        <div class="flex w-auto">
+            <div class="flex">
+                <img src="{{url_for('static',filename='img/sun.png')}}" alt="sunny" class="size-48 mb-4 p-5">
+                <div class="flex flex-col">
+                    <div id="location" class="font-[Gabarito] text-4xl font-bold">Province</div>
+                    <div class="flex">
+                        <div id="weatherHead" class="flex font-[Gabarito] text-6xl font-bold"></div>
+                        <div id="unit" class="font-[Gabarito] text-xl font-thin">°C</div>
+                    </div>
                     <div class="flex flex-col">
-                        {% if weather %}
-                        <div class="font-[Gabarito] text-4xl font-bold">{{ weather.data.city }}, {{weather.data.country}}</div>
-                        {% if page == 'weather' %}
-                        <div class="flex font-[Gabarito] text-6xl font-bold">{{ weather.data.current.weather.tp }}<div class="font-[Gabarito] text-xl font-thin">°C</div></div>
-                        {% else %}
-                        <div class="flex font-[Gabarito] text-6xl font-bold">{{ weather.data.current.pollution.aqius }}<div class="font-[Gabarito] text-xl font-thin">AQI</div></div>
-                        {% endif %}
-                        <div class="flex flex-col">
-                            <div class="font-[Gabarito]">Humidity: {{ weather.data.current.weather.hu }} %</div>
-                            <div class="font-[Gabarito]">Pressure: {{ weather.data.current.weather.pr }} hPa</div>
-                            <div class="font-[Gabarito]">Wind Speed: {{ weather.data.current.weather.ws }} m/s</div>
-                            <div class="font-[Gabarito]">Wind Direction: {{ weather.data.current.weather.wd }}°</div>
-                        </div>
-                        {% endif %}
+                        <div id="humidity" class="font-[Gabarito]">Humidity: N/A%</div>
+                        <div id="pressure" class="font-[Gabarito]">Pressure: N/A hPa</div>
+                        <div id="windSpeed" class="font-[Gabarito]">Wind Speed: N/A m/s</div>
+                        <div id="windDirection" class="font-[Gabarito]">Wind Direction: N/A°</div>
                     </div>
                 </div>
-                {% if datetime %}
-                <div class="flex-col w-auto align-items-end ml-auto">
-                    <div class="font-[Gabarito] font-bold text-4xl">{{ datetime.day }}</div>
-                    <div class="font-[Gabarito] font-bold text-4xl">{{ datetime.date }} {{ datetime.month }} {{ datetime.year }}</div>
-                    <div class="font-[Gabarito] font-bold text-4xl">{{ datetime.current_time }}</div>
-                </div>
-                {% endif %}
             </div>
-            {% endif %}
-        </div>
-        <div class="bg-white pl-10 pr-10 pt-10">
-            <div class="flex w-full justify-between">
-                {% if province %}
-                    <div class="font-[Gabarito] text-3xl font-bold">Area Recommendation for {{ province }}</div>
-                {% endif %}
+            <div class="flex-col w-auto align-items-end ml-auto">
+                <div id="day" class="font-[Gabarito] font-bold text-4xl">{{ datetime.day }}</div>
+                <div id="date" class="font-[Gabarito] font-bold text-4xl">{{ datetime.date }} {{ datetime.month }} {{ datetime.year }}</div>
+                <div id="currentTime" class="font-[Gabarito] font-bold text-4xl">{{ datetime.current_time }}</div>
             </div>
         </div>
-        <div class="flex flex-col bg-white overflow-x-auto gap-5 pl-10 pr-10 pb-10 pt-5">
-            {% for category, places in {"สถานที่ท่องเที่ยว": results.tourism,"โรงแรม": results.hotels,"ร้านอาหาร": results.restaurants,"วัด/ศาสนสถาน": results.temples,}.items() %}
-            <h3 class="text-xl font-bold">{{ category }}</h3>
-            <div class="flex w-full bg-white p-5 gap-5">
-            {% if places %}
-                {% for place in places %}
-                <a class="flex flex-col flex-shrink-0 items-center justify-center p-5 w-80 h-100 rounded-lg shadow-md mb-3 hover:scale-105 duration-200" href="https://www.google.com/maps?q={{ place.lat }},{{ place.lon }}">
-                    <div class="flex font-bold text-2xl">{{ place.name }}</div>
-                    <div>{{ place.full_address }}</div>
-                    <div>{{ "%.4f"|format(place.lat) }}, {{ "%.4f"|format(place.lon) }}</div>
-                </a>
-                {% endfor %}
-                </ul>
-                {% else %}
-                <p class="text-gray-600 mt-2">ไม่พบข้อมูล</p>
+    </div>
+    <div class="bg-white pl-10 pr-10 pt-10">
+        <div class="flex w-full justify-between">
+            {% if province %}
+                <div class="font-[Gabarito] text-3xl font-bold">Area Recommendation for {{ province }}</div>
             {% endif %}
-            </div>
+        </div>
+    </div>
+    <div class="flex flex-col bg-white overflow-x-auto gap-5 pl-10 pr-10 pb-10 pt-5">
+        {% for category, places in {"สถานที่ท่องเที่ยว": results.tourism,"โรงแรม": results.hotels,"ร้านอาหาร": results.restaurants,"วัด/ศาสนสถาน": results.temples,}.items() %}
+        <h3 class="text-xl font-bold">{{ category }}</h3>
+        <div class="flex w-full bg-white p-5 gap-5">
+        {% if places %}
+            {% for place in places %}
+            <a class="flex flex-col flex-shrink-0 items-center justify-center p-5 w-80 h-100 rounded-lg shadow-md mb-3 hover:scale-105 duration-200" href="https://www.google.com/maps?q={{ place.lat }},{{ place.lon }}">
+                <div class="flex font-bold text-2xl">{{ place.name }}</div>
+                <div>{{ place.full_address }}</div>
+                <div>{{ "%.4f"|format(place.lat) }}, {{ "%.4f"|format(place.lon) }}</div>
+            </a>
             {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-600 mt-2">ไม่พบข้อมูล</p>
+        {% endif %}
         </div>
-        <footer class="flex pl-10 pr-10 w-full bg-white drop-shadow-2xl h-20">
-            <div class="h-auto w-auto flex items-center gap-3">
-                <img class="h-auto size-12" src="{{url_for('static',filename='img/logo.png')}}" alt="logo">
-                <div class="flex-col">
-                    <p class="h-auto font-[Gabarito] text-2xl font-bold mb-0.1">AIRMIND SIGHT</p>
-                    <p class="mb-0.1">ระบบพยากรณ์อากาศและฝุ่น PM2.5 อัจฉริยะเพื่อกลยุทธ์ธุรกิจและความปลอดภัยของสังคม</p>
-                </div>
-            </div>
-        </footer>
-    </body>
-</html>
+        {% endfor %}
+    </div>
+{% endblock %}
