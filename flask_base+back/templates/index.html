@@ -7,6 +7,7 @@
     const results = JSON.parse("{{ results|safe }}".replace(/'/g, '"'));
     const province = "{{ province }}";
 
+    // once the page is loaded successfully
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelector('#location').innerHTML = `${weatherData.data.city}, Thailand`;
         document.querySelector('#weatherHead').innerHTML = weatherData.data.current.weather.tp;
@@ -16,14 +17,88 @@
         document.querySelector('#windSpeed').innerHTML = `Wind Speed: ${weatherData.data.current.weather.ws} m/s`;
         document.querySelector('#windDirection').innerHTML = `Wind Direction: ${weatherData.data.current.weather.wd}°`;
 
+        // get icon value from weatherData and get icon value from ic
+        // and do the if-else condition for icon selection
+        const weatherStatus = weatherData.data.current.weather.ic;
+        const aqius = weatherData.data.current.pollution.aqius;
+        var icon = document.querySelector('#icon');
+        
+        function defineIconSky() {
+            switch (weatherStatus) {
+                // for clear sky day
+                case "01d":
+                case "02d":
+                    icon.src = "{{url_for('static', filename='weather/01d.png')}}";
+                    break;
+                // for clear sky night
+                case "01n":
+                case "02n":
+                    icon.src = "{{url_for('static', filename='weather/01n.png')}}";
+                    break;
+                // for cloudy day
+                case "02d":
+                case "03d":
+                case "04d":
+                    icon.src = "{{url_for('static', filename='weather/0234d.png')}}";
+                    break;
+                // for cloudy night
+                case "02n":
+                case "03n":
+                case "04n":
+                    icon.src = "{{url_for('static', filename='weather/0234n.png')}}";
+                    break;
+                // for rainy day
+                case "09d":
+                case "10d":
+                    icon.src = "{{url_for('static', filename='weather/910d.png')}}";
+                    break;
+                // for rainy night
+                case "09n":
+                case "10n":
+                    icon.src = "{{url_for('static', filename='weather/910n.png')}}";
+                    break;
+                    // for thunderstorm
+                case "11d":
+                    icon.src = "{{url_for('static', filename='weather/11d.png')}}"
+                    break;
+            }
+        }
+
+        function defineIconAir() {
+            switch (aqius) {
+                case (aqius < 51):
+                    // Good - Green
+                    break;
+                case (50 < aqius < 101 ):
+                    // Moderate - Yellow
+                    break;
+                case (100 < aqius < 151):
+                    // Unhealty for Sensitive Groups - Orange
+                    break;
+                case (150 < aqius < 201):
+                    // Unhealty - Red
+                    break;
+                case (200 < aqius < 301):
+                    // Very Unhealty - Purple
+                    break;
+                case (aqius > 300):
+                    // Hazardous - Maroon
+                    break;
+            }
+        }
+
+        defineIconSky();
+
         // Add handlers for both buttons
         document.querySelector('#weatherBtn').onclick = function() {
             document.querySelector('#weatherHead').innerHTML = weatherData.data.current.weather.tp;
             document.querySelector('#unit').innerHTML = "°C";
+            defineIconSky();
         }
         document.querySelector('#aqiBtn').onclick = function() {
             document.querySelector('#weatherHead').innerHTML = weatherData.data.current.pollution.aqius;
             document.querySelector('#unit').innerHTML = "AQI";
+            defineIconAir();
     } 
     });
 </script>
@@ -45,7 +120,7 @@
         </div>
         <div class="flex w-auto">
             <div class="flex">
-                <img src="{{url_for('static',filename='img/sun.png')}}" alt="sunny" class="size-48 mb-4 p-5">
+                <img id="icon" src="{{url_for('static',filename='img/sun.png')}}" alt="sunny" class="size-48 mb-4 p-5">
                 <div class="flex flex-col">
                     <div id="location" class="font-[Gabarito] text-4xl font-bold">Province</div>
                     <div class="flex">
