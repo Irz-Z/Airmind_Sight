@@ -64,6 +64,7 @@
             }
         }
 
+        // define AQI icon from aqius value through aqi US system
         function defineIconAir() {
             switch (aqius) {
                 case (aqius < 51):
@@ -105,6 +106,7 @@
 {% endblock %}
 
 {% block content %}
+    <!-- Search bar -->
     <div class="relative w-full h-full flex flex-col text-black p-15 bg-white-500 bg-[url({{url_for('static',filename='img/sunny.jpg')}})] bg-blend-lighten bg-center bg-cover">
         <div class="flex justify-center items-center mb-4">
             <form method="POST" class="flex p-4 items-center justify-center w-150 bg-white rounded-4xl">
@@ -112,14 +114,17 @@
                 <button type="submit" class="w-20">ค้นหา</button>
             </form>
         </div>
+        <!-- Weather | Air Quality Button -->
         <div class="text-bold text-xl font-[Gabarito] mb-4">
             <div class="text-bold text-xl font-[Gabarito] mb-4">
                 <button id="weatherBtn" type="submit" name="page" class="font-bold hover:text-white duration-200">Weather</button> |
                 <button id="aqiBtn" type="submit" name="page" class="hover:text-white duration-200">Air Quality</button>
             </div>
         </div>
+        <!-- Weather Data -->
         <div class="flex w-auto">
             <div class="flex">
+                <!-- Weather Status Icon -->
                 <img id="icon" src="{{url_for('static',filename='img/sun.png')}}" alt="sunny" class="size-48 mb-4 p-5">
                 <div class="flex flex-col">
                     <div id="location" class="font-[Gabarito] text-4xl font-bold">Province</div>
@@ -135,6 +140,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Datetime -->
             <div class="flex-col w-auto align-items-end ml-auto">
                 <div id="day" class="font-[Gabarito] font-bold text-4xl">{{ datetime.day }}</div>
                 <div id="date" class="font-[Gabarito] font-bold text-4xl">{{ datetime.date }} {{ datetime.month }} {{ datetime.year }}</div>
@@ -142,6 +148,7 @@
             </div>
         </div>
     </div>
+    <!-- Area Recommendation Header -->
     <div class="bg-white pl-10 pr-10 pt-10">
         <div class="flex w-full justify-between">
             {% if province %}
@@ -149,6 +156,7 @@
             {% endif %}
         </div>
     </div>
+    <!-- Area Recommendation Body -->
     <div class="flex flex-col bg-white overflow-x-auto gap-5 pl-10 pr-10 pb-10 pt-5">
         {% for category, places in {"สถานที่ท่องเที่ยว": results.tourism,"โรงแรม": results.hotels,"ร้านอาหาร": results.restaurants,"วัด/ศาสนสถาน": results.temples,}.items() %}
         <h3 class="text-xl font-bold">{{ category }}</h3>
