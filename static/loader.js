@@ -87,11 +87,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 function getAQIColor(aqi) {
   if (aqi == null) return '#cccccc';
-  if (aqi <= 25) return '#4DC4EC';           // Very Good
-  if (aqi <= 50) return '#8AC541';           // Good
-  if (aqi <= 100) return '#FFEC00';          // Moderate
-  if (aqi <= 200) return '#F7941D';          // Not good for your health
-  return '#ED1C24';                          // Very Unhealthy
+  if (aqi <= 50) return '#009966';           // Good
+  if (aqi <= 100) return '#FFDE33';           // Moderate
+  if (aqi <= 150) return '#FF9933';          // Unhealthy for Sensitive Groups
+  if (aqi <= 200) return '#CC0033';          // Unhealthy
+  if (aqi <= 300) return '#660099';          // Very Unhealthy
+  return '#7E0023';                          // Hazardous
 }
 
 // Estimate PM2.5 from AQI (US standard)

@@ -469,6 +469,10 @@ def search_places():
             'error': str(e)
         })
 
+@app.route("/about")
+def about():
+    return render_template('about.html', datetime=get_datetime())
+
 @app.errorhandler(404)
 def not_found(error):
     """จัดการข้อผิดพลาด 404"""
