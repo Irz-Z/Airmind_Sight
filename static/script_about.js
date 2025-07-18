@@ -183,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 .nav {
                     position: absolute;
-                    top: 100%;
                     left: 0;
                     right: 0;
                     background: rgba(102, 126, 234, 0.95);

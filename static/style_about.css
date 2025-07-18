@@ -1,11 +1,4 @@
 /* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-
 body {
     font-family: 'Noto Sans Thai', sans-seriff;
     line-height: 1.6;
@@ -163,18 +156,58 @@ body {
 }
 
 /* Placeholder for team member photos */
+/* Team Member Photo Styles */
 .member-photo {
-    width: 120px;
-    height: 120px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
-    margin: 0 auto 1rem;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%; /* เปลี่ยนเป็น 50% เพื่อให้เป็นวงกลมสมบูรณ์ */
+    margin: 0 auto 20px; /* จัดกึ่งกลางและเพิ่มระยะห่างด้านล่าง */
+    overflow: hidden; /* ซ่อนส่วนที่เกินขอบ */
+    border: 3px solid #e0e0e0; /* เพิ่มกรอบ */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* เพิ่มเงา */
+    
+    /* จัดให้อยู่ตรงกลาง */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* เพิ่ม transition สำหรับ effect */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.member-photo:hover {
+    transform: scale(1.05); /* ขยายเมื่อ hover */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.member-photo img {
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover; /* ให้รูปครอบคลุมพื้นที่ทั้งหมด */
+    object-position: center; /* จัดจุดโฟกัสให้อยู่ตรงกลาง */
+    border-radius: 50%; /* ทำให้รูปภาพเป็นวงกลม */
+}
+
+/* จัดให้ team-member card อยู่ตรงกลาง */
+.team-member {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center; /* จัดเนื้อหาทั้งหมดให้อยู่ตรงกลาง */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    
+    /* จัดเนื้อหาภายในให้อยู่ตรงกลาง */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .team-member h4 {
     color: #667eea;
     margin-bottom: 0.5rem;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
 }
 
 .team-member p:first-of-type {
@@ -443,12 +476,6 @@ tr:hover td {
     .header .container {
         flex-direction: column;
         gap: 1rem;
-    }
-    
-    .nav ul {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
     }
     
     .hero h2 {

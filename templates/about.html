@@ -4,6 +4,28 @@
     <title>About</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style_about.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+    <script>
+        function formatDateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+
+            const formatted = new Intl.DateTimeFormat('en-GB', options).format(now);
+            const cleanformatted = formatted.replace(' at', ',');
+            document.querySelector( "#current-date").innerHTML = `Current Time: ${cleanformatted}`;
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            formatDateTime();
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +38,7 @@
                 <p class="hero-subtitle"> ระบบพยากรณ์อากาศและฝุ่น PM2.5 ร่วมกับ Predictive Model <br>เพื่อกลยุทธ์ทางธุรกิจและความปลอดภัยของสังคม</p>
                 <!-- Dynamic date display -->
                 <div class="current-date">
-                    <span id="current-date">Current time: {{ datetime.day }}, {{ datetime.date }} {{datetime.month}} {{datetime.year}} at {{datetime.current_time}}</span>
+                    <span id="current-date">Current time:</span>
                 </div>
             </section>
 
@@ -162,11 +184,11 @@
             <section class="services-overview">
                 <h3>What We Offer</h3>
                 <div class="services-grid">
-                    <div class="service-item">
-                        <div class="service-icon">📊</div>
-                        <h4>Daily Forecasts</h4>
-                        <p>ข้อมูลการคาดการณ์ AQI ประจำวัน สำหรับการเตรียมความพร้อมและลดความเสี่ยงต่อสุขภาพ</p>
-                    </div>
+                        <div class="service-item">
+                            <div class="service-icon">📊</div>
+                            <h4>Daily Forecasts</h4>
+                            <p>ข้อมูลการคาดการณ์ AQI ประจำวัน สำหรับการเตรียมความพร้อมและลดความเสี่ยงต่อสุขภาพ</p>
+                        </div>
                     <div class="service-item">
                         <div class="service-icon">🗺</div>
                         <h4>Map</h4>
@@ -191,27 +213,21 @@
                 <div class="team-grid">
                     <div class="team-member">
                         <div class="member-photo">
-                            <img src="{{ url_for('static', filename='img/bad.png') }}">
+                            <img src="{{ url_for('static', filename='img/moss.jpg') }}">
                         </div>
                         <h4>Panupak Plipimai</h4>
-                        <p>Chief Backend</p>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                     </div>
                     <div class="team-member">
                         <div class="member-photo">
-                            <img src="{{ url_for('static', filename='img/bad.png') }}">
+                            <img src="{{ url_for('static', filename='img/phom.jpg') }}">
                         </div>
                         <h4>Phom Kongkarak</h4>
-                        <p>Lead Developer</p>
-                        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna.</p>
                     </div>
                     <div class="team-member">
                         <div class="member-photo">
-                            <img src="{{ url_for('static', filename='img/bad.png') }}">
+                            <img src="{{ url_for('static', filename='img/adison.jpg') }}" alt="Adison Jessadaapimuk" class="circular-image">
                         </div>
                         <h4>Adison Jessadaapimuk</h4>
-                        <p>noob</p>
-                        <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
                     </div>
                 </div>
             </section>

@@ -147,6 +147,11 @@ fetch('/data')
       ) {
         const [lng, lat] = info.data.location.coordinates;
         const aqi = info.data.current.pollution.aqius;
+        const humidity = info.data.current.weather.hu; // หน่วย %
+        const pressure = info.data.current.weather.pr; // หน่วย hPa 
+        const temperature = info.data.current.weather.tp; // หน่วย °C
+        const wind_direction = info.data.current.weather.wd; // หน่วย °
+        const wind_speed = info.data.current.weather.ws; // หน่วย m/s
 
         // สร้าง DivIcon ที่มีค่า AQI อยู่บน marker
         const aqiIcon = L.divIcon({
@@ -195,7 +200,12 @@ fetch('/data')
 
             <div style="background-color: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px; margin: 16px 0;">
               <h3 style="margin: 0 0 8px 0; color: #0ea5e9;">ข้อมูลเบื้องต้น</h3>
-              <p style="margin: 4px 0;"><strong>Air Quality Index :</strong> ${aqi}</p>
+              <p style="margin: 4px 0;"><strong>Air Quality Index :</strong> ${aqi} AQI</p><br>
+              <p style="margin: 4px 0;"><strong>Humidity :</strong> ${humidity} %</p>
+              <p style="margin: 4px 0;"><strong>Pressure :</strong> ${pressure} hPa</p>
+              <p style="margin: 4px 0;"><strong>Temperature :</strong> ${temperature}°C</p>
+              <p style="margin: 4px 0;"><strong>Wind direction :</strong> ${wind_direction}°</p>
+              <p style="margin: 4px 0;"><strong>Wind speed :</strong> ${wind_speed} m/s</p><br>
               <p><strong>Latitude :</strong> ${lat.toFixed(4)}</p>
               <p><strong>Longitude :</strong> ${lng.toFixed(4)}</p>
             </div>

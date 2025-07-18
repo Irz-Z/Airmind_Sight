@@ -5,16 +5,213 @@
     // import value from flask
     const weatherData = JSON.parse("{{ weather|safe }}".replace(/'/g, '"'));
     const province = "{{ province }}";
+    // Dictionary สำหรับแปลงชื่อจังหวัดภาษาไทยเป็นอังกฤษ
+    const thaiToEnglishProvince = {
+    "อำนาจเจริญ": "Amnat Charoen",
+    "อ่างทอง": "Ang Thong",
+    "กรุงเทพมหานคร": "Bangkok",
+    "บุรีรัมย์": "Buriram",
+    "ฉะเชิงเทรา": "Chachoengsao",
+    "ชัยนาท": "Chai Nat",
+    "ชัยภูมิ": "Chaiyaphum",
+    "บึงกาฬ": "Changwat Bueng Kan",
+    "อุบลราชธานี": "Changwat Ubon Ratchathani",
+    "จันทบุรี": "Chanthaburi",
+    "เชียงใหม่": "Chiang Mai",
+    "เชียงราย": "Chiang Rai",
+    "ชลบุรี": "Chon Buri",
+    "ชุมพร": "Chumphon",
+    "กาฬสินธุ์": "Kalasin",
+    "กำแพงเพชร": "Kamphaeng Phet",
+    "กาญจนบุรี": "Kanchanaburi",
+    "ขอนแก่น": "Khon Kaen",
+    "กระบี่": "Krabi",
+    "ลำปาง": "Lampang",
+    "ลำพูน": "Lamphun",
+    "เลย": "Loei",
+    "ลพบุรี": "Lopburi",
+    "แม่ฮ่องสอน": "Mae Hong Son",
+    "มหาสารคาม": "Maha Sarakham",
+    "มุกดาหาร": "Mukdahan",
+    "นครนายก": "Nakhon Nayok",
+    "นครปฐม": "Nakhon Pathom",
+    "นครพนม": "Nakhon Phanom",
+    "นครราชสีมา": "Nakhon Ratchasima",
+    "นครสวรรค์": "Nakhon Sawan",
+    "นครศรีธรรมราช": "Nakhon Si Thammarat",
+    "น่าน": "Nan",
+    "นราธิวาส": "Narathiwat",
+    "หนองบัวลำภู": "Nong Bua Lamphu",
+    "หนองคาย": "Nong Khai",
+    "นนทบุรี": "Nonthaburi",
+    "ปทุมธานี": "Pathum Thani",
+    "ปัตตานี": "Pattani",
+    "พังงา": "Phangnga",
+    "พัทลุง": "Phatthalung",
+    "พะเยา": "Phayao",
+    "เพชรบูรณ์": "Phetchabun",
+    "เพชรบุรี": "Phetchaburi",
+    "พิจิตร": "Phichit",
+    "พิษณุโลก": "Phitsanulok",
+    "พระนครศรีอยุธยา": "Phra Nakhon Si Ayutthaya",
+    "อยุธยา": "Phra Nakhon Si Ayutthaya",
+    "แพร่": "Phrae",
+    "ภูเก็ต": "Phuket",
+    "ปราจีนบุรี": "Prachin Buri",
+    "ประจวบคีรีขันธ์": "Prachuap Khiri Khan",
+    "ระนอง": "Ranong",
+    "ราชบุรี": "Ratchaburi",
+    "ระยอง": "Rayong",
+    "ร้อยเอ็ด": "Roi Et",
+    "สระแก้ว": "Sa Kaeo",
+    "สกลนคร": "Sakon Nakhon",
+    "สมุทรปราการ": "Samut Prakan",
+    "สมุทรสาคร": "Samut Sakhon",
+    "สมุทรสงคราม": "Samut Songkhram",
+    "สระบุรี": "Sara Buri",
+    "สตูล": "Satun",
+    "สิงห์บุรี": "Sing Buri",
+    "ศรีสะเกษ": "Sisaket",
+    "สงขลา": "Songkhla",
+    "สุโขทัย": "Sukhothai",
+    "สุพรรณบุรี": "Suphan Buri",
+    "สุราษฎร์ธานี": "Surat Thani",
+    "สุรินทร์": "Surin",
+    "ตาก": "Tak",
+    "ตรัง": "Trang",
+    "ตราด": "Trat",
+    "อุดรธานี": "Udon Thani",
+    "อุทัยธานี": "Uthai Thani",
+    "อุตรดิตถ์": "Uttaradit",
+    "ยะลา": "Yala",
+    "ยโสธร": "Yasothon"
+    }
+    const englishToThaiProvince = {
+    "Amnat Charoen": "อำนาจเจริญ",
+        "Ang Thong": "อ่างทอง",
+        "Bangkok": "กรุงเทพมหานคร",
+        "Buriram": "บุรีรัมย์",
+        "Chachoengsao": "ฉะเชิงเทรา",
+        "Chai Nat": "ชัยนาท",
+        "Chaiyaphum": "ชัยภูมิ",
+        "Changwat Bueng Kan": "บึงกาฬ",
+        "Changwat Ubon Ratchathani": "อุบลราชธานี",
+        "Chanthaburi": "จันทบุรี",
+        "Chiang Mai": "เชียงใหม่",
+        "Chiang Rai": "เชียงราย",
+        "Chon Buri": "ชลบุรี",
+        "Chumphon": "ชุมพร",
+        "Kalasin": "กาฬสินธุ์",
+        "Kamphaeng Phet": "กำแพงเพชร",
+        "Kanchanaburi": "กาญจนบุรี",
+        "Khon Kaen": "ขอนแก่น",
+        "Krabi": "กระบี่",
+        "Lampang": "ลำปาง",
+        "Lamphun": "ลำพูน",
+        "Loei": "เลย",
+        "Lopburi": "ลพบุรี",
+        "Mae Hong Son": "แม่ฮ่องสอน",
+        "Maha Sarakham": "มหาสารคาม",
+        "Mukdahan": "มุกดาหาร",
+        "Nakhon Nayok": "นครนายก",
+        "Nakhon Pathom": "นครปฐม",
+        "Nakhon Phanom": "นครพนม",
+        "Nakhon Ratchasima": "นครราชสีมา",
+        "Nakhon Sawan": "นครสวรรค์",
+        "Nakhon Si Thammarat": "นครศรีธรรมราช",
+        "Nan": "น่าน",
+        "Narathiwat": "นราธิวาส",
+        "Nong Bua Lamphu": "หนองบัวลำภู",
+        "Nong Khai": "หนองคาย",
+        "Nonthaburi": "นนทบุรี",
+        "Pathum Thani": "ปทุมธานี",
+        "Pattani": "ปัตตานี",
+        "Phangnga": "พังงา",
+        "Phatthalung": "พัทลุง",
+        "Phayao": "พะเยา",
+        "Phetchabun": "เพชรบูรณ์",
+        "Phetchaburi": "เพชรบุรี",
+        "Phichit": "พิจิตร",
+        "Phitsanulok": "พิษณุโลก",
+        "Phra Nakhon Si Ayutthaya": "พระนครศรีอยุธยา",
+        "Phrae": "แพร่",
+        "Phuket": "ภูเก็ต",
+        "Prachin Buri": "ปราจีนบุรี",
+        "Prachuap Khiri Khan": "ประจวบคีรีขันธ์",
+        "Ranong": "ระนอง",
+        "Ratchaburi": "ราชบุรี",
+        "Rayong": "ระยอง",
+        "Roi Et": "ร้อยเอ็ด",
+        "Sa Kaeo": "สระแก้ว",
+        "Sakon Nakhon": "สกลนคร",
+        "Samut Prakan": "สมุทรปราการ",
+        "Samut Sakhon": "สมุทรสาคร",
+        "Samut Songkhram": "สมุทรสงคราม",
+        "Sara Buri": "สระบุรี",
+        "Satun": "สตูล",
+        "Sing Buri": "สิงห์บุรี",
+        "Sisaket": "ศรีสะเกษ",
+        "Songkhla": "สงขลา",
+        "Sukhothai": "สุโขทัย",
+        "Suphan Buri": "สุพรรณบุรี",
+        "Surat Thani": "สุราษฎร์ธานี",
+        "Surin": "สุรินทร์",
+        "Tak": "ตาก",
+        "Trang": "ตรัง",
+        "Trat": "ตราด",
+        "Udon Thani": "อุดรธานี",
+        "Uthai Thani": "อุทัยธานี",
+        "Uttaradit": "อุตรดิตถ์",
+        "Yala": "ยะลา",
+        "Yasothon": "ยโสธร"
+    }
+
+    function translateProvinceName(inputName) {
+        if (!inputName) return inputName;
+        const isThaiText = /[\u0E00-\u0E7F]/.test(inputName);
+        if (isThaiText) {
+            const englishName = thaiToEnglishProvince[inputName.trim()];
+            if (englishName) {
+                return englishName;
+            } else {
+                return inputName;
+            }
+        } else {
+            return inputName;
+        }
+    }
+
+    function formatDateTime() {
+        const now = new Date();
+        const options = {
+            weekday: 'long',
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        };
+
+        const formatted = new Intl.DateTimeFormat('en-GB', options).format(now);
+        const cleanformatted = formatted.replace(' at', ',');
+        document.querySelector( "#currentTime").innerHTML = `${cleanformatted}`;
+    }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            formatDateTime();
+        });
 
     // once the page is loaded successfully
     document.addEventListener("DOMContentLoaded", function() {
-        document.querySelector('#location').innerHTML = `${weatherData.data.city}, Thailand`;
+        document.querySelector('#location').innerHTML = `${englishToThaiProvince[weatherData.data.city]}, Thailand`;
         document.querySelector('#weatherHead').innerHTML = weatherData.data.current.weather.tp;
         document.querySelector('#unit').innerHTML = "°C";
-        document.querySelector('#humidity').innerHTML = `Humidity: ${weatherData.data.current.weather.hu}%`;
-        document.querySelector('#pressure').innerHTML = `Pressure: ${weatherData.data.current.weather.pr} hPa`;
-        document.querySelector('#windSpeed').innerHTML = `Wind Speed: ${weatherData.data.current.weather.ws} m/s`;
-        document.querySelector('#windDirection').innerHTML = `Wind Direction: ${weatherData.data.current.weather.wd}°`;
+        document.querySelector('#humidity').innerHTML = `ความชื้น: ${weatherData.data.current.weather.hu} %`;
+        document.querySelector('#pressure').innerHTML = `ความกดอากาศ: ${weatherData.data.current.weather.pr} hPa`;
+        document.querySelector('#windSpeed').innerHTML = `ความเร็วลม: ${weatherData.data.current.weather.ws} m/s`;
+        document.querySelector('#windDirection').innerHTML = `ทิศทางลม: ${weatherData.data.current.weather.wd}°`;
+        formatDateTime();
 
         // get icon value from weatherData and get icon value from ic
         // and do the if-else condition for icon selection
@@ -99,8 +296,23 @@
             document.querySelector('#weatherHead').innerHTML = weatherData.data.current.pollution.aqius;
             document.querySelector('#unit').innerHTML = "AQI";
             defineIconAir();
-    } 
+        }
     });
+
+    // ฟังก์ชันสำหรับจัดการ form submission
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        const provinceInput = document.getElementById('provinceInput');
+        const inputValue = provinceInput.value.trim();
+        if (!inputValue) {
+            alert('กรุณาใส่ชื่อจังหวัด');
+            return false;
+        }
+        const translatedName = translateProvinceName(inputValue);
+        provinceInput.value = translatedName;
+        event.target.submit();
+        return true;
+    }
 </script>
 {% endblock %}
 
@@ -108,8 +320,8 @@
     <!-- Search bar -->
     <div class="relative w-full h-full flex flex-col text-black p-15 bg-white-500 bg-[url({{url_for('static',filename='img/sunny.jpg')}})] bg-blend-lighten bg-center bg-cover">
         <div class="flex justify-center items-center mb-4">
-            <form method="POST" class="flex p-4 items-center justify-center w-150 bg-white rounded-4xl">
-                <input name="province" value="{{ province }}" placeholder="ใส่ชื่อสถานที่..." class="w-full"/>
+            <form method="POST" class="flex p-4 items-center justify-center w-150 bg-white rounded-4xl" onsubmit="handleFormSubmit(event)">
+                <input id="provinceInput" name="province" value="{{ province }}" placeholder="ใส่ชื่อสถานที่..." class="w-full"/>
                 <button type="submit" class="w-20">ค้นหา</button>
             </form>
         </div>
@@ -141,31 +353,29 @@
             </div>
             <!-- Datetime -->
             <div class="flex-col w-auto align-items-end ml-auto">
-                <div id="day" class="font-[Gabarito] font-bold text-4xl">{{ datetime.day }}</div>
-                <div id="date" class="font-[Gabarito] font-bold text-4xl">{{ datetime.date }} {{ datetime.month }} {{ datetime.year }}</div>
-                <div id="currentTime" class="font-[Gabarito] font-bold text-4xl">{{ datetime.current_time }}</div>
+                <div id="currentTime" class="font-[Gabarito] font-bold text-4xl"></div>
             </div>
         </div>
     </div>
     <div class="flex mt-10 w-full justify-center items-center flex-wrap gap-5">
         <div class="flex-col w-full h-full justify-center items-center bg-white drop-shadow-2xl rounded-lg max-w-90 p-10
     hover:shadow-2xl hover:-translate-y-4 transform transition duration-200 ease-in-out">
-            <img class="flex justify-center items-center" src="{{url_for('static', filename='img/neuron.png')}}" alt="Neuron Network">
-            <h1 class="font-[Gabarito] text-2xl font-bold text-center">AI-Powered</h1>
-            <p class="font-[Gabarito] text-center">Advanced machine learning algorithms analyze weather patterns and historical data</p>
+            <img class="flex justify-center items-center" src="{{url_for('static', filename='img/map2.png')}}" alt="Neuron Network">
+            <h1 class="font-[Gabarito] text-2xl font-bold text-center">Map</h1>
+            <p class="font-[Gabarito] text-center">An interactive map showing daily air quality data across Thailand, with weather information</p>
         </div>
         <div class="flex-col w-full h-full justify-center items-center bg-white drop-shadow-2xl rounded-lg max-w-90 p-10
     hover:shadow-2xl hover:-translate-y-4 transform transition duration-200 ease-in-out">
             <img class="flex justify-center items-center p-10" src="{{url_for('static', filename='img/graph.png')}}" alt="Graph Forecast">
             <h1 class="font-[Gabarito] text-2xl font-bold text-center">Accurate Forecast</h1>
-            <p class="font-[Gabarito] text-center">Get detailed PM2.5 predictions for the next 7 days to plan ahead <br>‎ </p>
+            <p class="font-[Gabarito] text-center">Get detailed PM2.5 predictions for the next 2, 7 days to plan ahead <br>‎ </p>
         </div>
         <div class="flex-col w-full h-full justify-center items-center bg-white drop-shadow-2xl rounded-lg max-w-90 p-10
     hover:shadow-2xl hover:-translate-y-4 transform transition duration-200 ease-in-out">
-            <img class="flex justify-center items-center p-10" src="{{url_for('static', filename='img/map.png')}}" alt="Place Recommendation">
+            <img class="flex justify-center items-center p-10" src="{{url_for('static', filename='img/map1.png')}}" alt="Place Recommendation">
             <h1 class="font-[Gabarito] text-2xl font-bold text-center">Place Recommendation</h1>
-            <p class="font-[Gabarito] text-center">Advanced machine learning algorithms analyze weather patterns and historical data</p>
+            <p class="font-[Gabarito] text-center">Suggested areas with clean air for your next outdoor plan</p>
         </div>
     </div><br><br><br>
     
-{% endblock %}
+{% endblock %}  
