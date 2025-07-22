@@ -7,14 +7,31 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const mobileButton = document.getElementById("nav-mobile-menu-button");
+                const mobileMenu = document.getElementById("nav-mobile-menu");
+                const closeButton = document.getElementById("nav-closeBtn");
+
+                if (mobileButton && mobileMenu) {
+                    mobileButton.addEventListener("click", function () {
+                        mobileMenu.classList.toggle("hidden");
+                    });
+                }
+
+                closeButton.addEventListener("click", function () {
+                    mobileMenu.classList.add("hidden");
+                });
+            });
+        </script>
         <!-- for js script implementation -->
          {% block header %}
          {% endblock %}
     </head>
-    <body>
-        <!-- Navigation Bar -->
-         <nav class="bg-white drop-shadow-2xl h-20 p-4">
-            <div class="h-auto flex justify-between items-center pl-10 pr-10">
+    <body class="md:pt-20">
+        <!-- Navigation Bar for Desktop-->
+         <nav class="hidden md:flex fixed top-0 left-0 right-0 bg-white drop-shadow-2xl h-20 p-4 z-50">
+            <div class="w-full h-auto flex justify-between items-center pl-10 pr-10">
                 <a href="{{url_for('index')}}">
                     <div class="h-auto w-auto flex items-center gap-3">
                         <img class="h-auto size-12" src="{{url_for('static', filename='img/logo.png')}}" alt="logo">
@@ -28,6 +45,29 @@
                 </ul>
             </div>
         </nav>
+        <!-- Navigation Bar for Mobile -->
+         <nav class="md:hidden bg-white drop-shadow-2xl h-20 p-4">
+            <div class="h-auto flex justify-between items-center pl-10 pr-10">
+                <a href="{{url_for('index')}}">
+                    <div class="h-auto w-auto flex items-center gap-3">
+                        <img class="h-auto size-12" src="{{url_for('static', filename='img/logo.png')}}" alt="logo">
+                        <p class="h-auto font-[Gabarito] text-2xl font-bold">AIRMIND SIGHT</p>
+                    </div>
+                </a>
+                <button id="nav-mobile-menu-button" class="text-gray-500 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+            </div>
+        </nav>
+        <div id="nav-mobile-menu" class="hidden fixed inset-0 z-50 bg-white bg-opacity-50 flex flex-col items-center justify-center transition-all duration-300">
+            <button id="nav-closeBtn" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="absolute top-6 right-6 text-3xl text-gray-500">&times;</button>
+            <ul class="flex flex-col gap-8 text-2xl font-bold">
+                <li><a href="{{ url_for('map_view') }}" class="hover:text-gray-500">Map</a></li>
+                <li><a href="{{ url_for('area_rec') }}" class="hover:text-gray-500">Area Recommendation</a></li>
+                <li><a href="{{ url_for('about') }}" class="hover:text-gray-500">About</a></li>
+            </ul>
+        </div>
         <!-- Content -->
         {% block content %}
         {% endblock %}

@@ -194,7 +194,7 @@ fetch('/data')
 
           sidePopup.classList.remove('hidden');
           sidePopup.innerHTML = `
-            <button style="position: absolute; top: 6rem; right: 20px; border: 1px solid #0ea5e9; background: #f0f9ff;color: #000; font-size: 20px; cursor: pointer;" onclick="document.getElementById('side-popup').classList.add('hidden')">x</button>
+            <button id="PopupBtn" style="position: absolute; top: 6rem; right: 20px; border: 1px solid #0ea5e9; background: #f0f9ff;color: #000; font-size: 20px; cursor: pointer;" onclick="document.getElementById('side-popup').classList.add('hidden')">x</button>
             
             <br><h1 style="font-size:2rem;"><strong>${provinceNameTH}</strong></h1>
 

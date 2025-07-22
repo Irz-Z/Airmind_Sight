@@ -202,22 +202,50 @@
             formatDateTime();
         });
 
-    // once the page is loaded successfully
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelector('#location').innerHTML = `${englishToThaiProvince[weatherData.data.city]}, Thailand`;
-        document.querySelector('#weatherHead').innerHTML = weatherData.data.current.weather.tp;
-        document.querySelector('#unit').innerHTML = "°C";
-        document.querySelector('#humidity').innerHTML = `ความชื้น: ${weatherData.data.current.weather.hu} %`;
-        document.querySelector('#pressure').innerHTML = `ความกดอากาศ: ${weatherData.data.current.weather.pr} hPa`;
-        document.querySelector('#windSpeed').innerHTML = `ความเร็วลม: ${weatherData.data.current.weather.ws} m/s`;
-        document.querySelector('#windDirection').innerHTML = `ทิศทางลม: ${weatherData.data.current.weather.wd}°`;
+        
+        // once the page is loaded successfully
+        document.addEventListener("DOMContentLoaded", function() {
+            // initialize HTML classes
+            const locations = document.querySelectorAll('.location');
+            const weatherHeads = document.querySelectorAll('.weather-head');
+            const units = document.querySelectorAll('.unit');
+            const humidities = document.querySelectorAll('.humidity');
+            const pressures = document.querySelectorAll('.pressure');
+            const windSpeeds = document.querySelectorAll('.wind-speed');
+            const windDirections = document.querySelectorAll('.wind-direction');
+            const weatherIcons = document.querySelectorAll('.weather-icon');
+
+            locations.forEach(location => {
+                location.innerHTML = `${englishToThaiProvince[weatherData[province].data.city]}, ประเทศไทย`;
+            });
+            weatherHeads.forEach(weatherHead => {
+                weatherHead.innerHTML = weatherData[province].data.current.weather.tp;
+            });
+            units.forEach(unit => {
+                unit.innerHTML = "°C";
+            });
+            humidities.forEach(humidity => {
+                humidity.innerHTML = `ความชื้น: ${weatherData[province].data.current.weather.hu} %`;
+            });
+            pressures.forEach(pressure => {     
+                pressure.innerHTML = `ความกดอากาศ: ${weatherData[province].data.current.weather.pr} hPa`;
+            });
+            windSpeeds.forEach(windSpeed => {
+                windSpeed.innerHTML = `ความเร็วลม: ${weatherData[province].data.current.weather.ws} m/s`;
+            });
+            windDirections.forEach(windDirection => {
+                windDirection.innerHTML = `ทิศทางลม: ${weatherData[province].data.current.weather.wd}°`;
+            });
         formatDateTime();
 
         // get icon value from weatherData and get icon value from ic
         // and do the if-else condition for icon selection
-        const weatherStatus = weatherData.data.current.weather.ic;
-        const aqius = weatherData.data.current.pollution.aqius;
-        var icon = document.querySelector('#icon');
+        const weatherStatuses = document.querySelectorAll('.weather-icon');
+        const aqiuss = document.querySelectorAll('.aqius');
+        weatherStatuses.forEach(icon = defineIconSky());
+        aqiuss.forEach(aqius => {
+            aqius.innerHTML = `AQI: ${weatherData[province].data.current.pollution.aqius}`;
+        });
         
         function defineIconSky() {
             switch (weatherStatus) {
@@ -260,40 +288,16 @@
             }
         }
 
-        // define AQI icon from aqius value through aqi US system
-        function defineIconAir() {
-            switch (aqius) {
-                case (aqius < 51):
-                    // Good - Green
-                    break;
-                case (50 < aqius < 101 ):
-                    // Moderate - Yellow
-                    break;
-                case (100 < aqius < 151):
-                    // Unhealty for Sensitive Groups - Orange
-                    break;
-                case (150 < aqius < 201):
-                    // Unhealty - Red
-                    break;
-                case (200 < aqius < 301):
-                    // Very Unhealty - Purple
-                    break;
-                case (aqius > 300):
-                    // Hazardous - Maroon
-                    break;
-            }
-        }
-
         defineIconSky();
 
         // Add handlers for both buttons
         document.querySelector('#weatherBtn').onclick = function() {
-            document.querySelector('#weatherHead').innerHTML = weatherData.data.current.weather.tp;
+            document.querySelector('#weatherHead').innerHTML = weatherData[province].data.current.weather.tp;
             document.querySelector('#unit').innerHTML = "°C";
             defineIconSky();
         }
         document.querySelector('#aqiBtn').onclick = function() {
-            document.querySelector('#weatherHead').innerHTML = weatherData.data.current.pollution.aqius;
+            document.querySelector('#weatherHead').innerHTML = weatherData[province].data.current.pollution.aqius;
             document.querySelector('#unit').innerHTML = "AQI";
             defineIconAir();
         }
@@ -332,28 +336,45 @@
                 <button id="aqiBtn" type="submit" name="page" class="hover:text-white duration-200">Air Quality</button>
             </div>
         </div>
-        <!-- Weather Data -->
-        <div class="flex w-auto">
+        <!-- Weather Data for Desktop -->
+        <div class="hidden md:flex w-auto">
             <div class="flex">
-                <!-- Weather Status Icon -->
-                <img id="icon" src="{{url_for('static',filename='img/sun.png')}}" alt="sunny" class="size-48 mb-4 p-5">
+                <img class="weather-icon size-48 mb-4 p-5" src="{{url_for('static',filename='img/sun.png')}}" alt="sunny">
                 <div class="flex flex-col">
-                    <div id="location" class="font-[Gabarito] text-4xl font-bold">Province</div>
+                    <div class="location font-[Gabarito] text-4xl font-bold">Location Not Found</div>
                     <div class="flex">
-                        <div id="weatherHead" class="flex font-[Gabarito] text-6xl font-bold"></div>
-                        <div id="unit" class="font-[Gabarito] text-xl font-thin">°C</div>
+                        <div class="weather-head flex font-[Gabarito] text-6xl font-bold"></div>
+                        <div class="unit font-[Gabarito] text-xl font-thin">°C</div>
                     </div>
                     <div class="flex flex-col">
-                        <div id="humidity" class="font-[Gabarito]">Humidity: N/A%</div>
-                        <div id="pressure" class="font-[Gabarito]">Pressure: N/A hPa</div>
-                        <div id="windSpeed" class="font-[Gabarito]">Wind Speed: N/A m/s</div>
-                        <div id="windDirection" class="font-[Gabarito]">Wind Direction: N/A°</div>
+                        <div class="humidity font-[Gabarito]">Humidity: N/A%</div>
+                        <div class="pressure font-[Gabarito]">Pressure: N/A hPa</div>
+                        <div class="wind-speed font-[Gabarito]">Wind Speed: N/A m/s</div>
+                        <div class="wind-direction font-[Gabarito]">Wind Direction: N/A°</div>
                     </div>
                 </div>
             </div>
             <!-- Datetime -->
-            <div class="flex-col w-auto align-items-end ml-auto">
+            <div class="hidden md:flex flex-col w-auto align-items-end ml-auto">
                 <div id="currentTime" class="font-[Gabarito] font-bold text-4xl"></div>
+            </div>
+        </div>
+        <!-- Weather Data for Mobile -->
+        <div class="flex flex-col md:hidden w-auto">
+            <!-- Weather Status Icon -->
+            <img class="flex weather-icon size-48 mb-4 p-5" src="{{url_for('static',filename='img/sun.png')}}" alt="sunny"></img>
+            <div class="flex flex-col">
+                <div class="location font-[Gabarito] text-4xl font-bold">Location Not Found</div>
+                <div class="flex">
+                    <div class="weather-head flex font-[Gabarito] text-6xl font-bold"></div>
+                    <div class="unit font-[Gabarito] text-xl font-thin">°C</div>
+                </div>
+                <div class="flex flex-col">
+                    <div class="humidity font-[Gabarito]">Humidity: N/A%</div>
+                    <div class="pressure font-[Gabarito]">Pressure: N/A hPa</div>
+                    <div class="wind-speed font-[Gabarito]">Wind Speed: N/A m/s</div>
+                    <div class="wind-direction font-[Gabarito]">Wind Direction: N/A°</div>
+                </div>
             </div>
         </div>
     </div>
