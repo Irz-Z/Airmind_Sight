@@ -197,12 +197,7 @@
         const cleanformatted = formatted.replace(' at', ',');
         document.querySelector( "#currentTime").innerHTML = `${cleanformatted}`;
     }
-        
-        document.addEventListener("DOMContentLoaded", function() {
-            formatDateTime();
-        });
 
-        
         // once the page is loaded successfully
         document.addEventListener("DOMContentLoaded", function() {
             // initialize HTML classes
@@ -236,13 +231,15 @@
             windDirections.forEach(windDirection => {
                 windDirection.innerHTML = `ทิศทางลม: ${weatherData[province].data.current.weather.wd}°`;
             });
+            
         formatDateTime();
 
         // get icon value from weatherData and get icon value from ic
         // and do the if-else condition for icon selection
         const weatherStatuses = document.querySelectorAll('.weather-icon');
         const aqiuss = document.querySelectorAll('.aqius');
-        weatherStatuses.forEach(icon = defineIconSky());
+        const icons = document.querySelectorAll('.weather-icon');
+        weatherStatus = weatherData[province].data.current.weather.ic;
         aqiuss.forEach(aqius => {
             aqius.innerHTML = `AQI: ${weatherData[province].data.current.pollution.aqius}`;
         });
@@ -252,54 +249,73 @@
                 // for clear sky day
                 case "01d":
                 case "02d":
-                    icon.src = "{{url_for('static', filename='weather/01d.png')}}";
+                    icons.forEach(icon => {
+                        icon.src = "{{url_for('static', filename='weather/01d.png')}}";
+                    });
                     break;
                 // for clear sky night
                 case "01n":
                 case "02n":
-                    icon.src = "{{url_for('static', filename='weather/01n.png')}}";
+                    icons.forEach(icon => {
+                        icon.src = "{{url_for('static', filename='weather/01n.png')}}";
+                    });
                     break;
                 // for cloudy day
                 case "02d":
                 case "03d":
                 case "04d":
-                    icon.src = "{{url_for('static', filename='weather/0234d.png')}}";
+                    icons.forEach(icon => {
+                        icon.src = "{{url_for('static', filename='weather/0234d.png')}}";
+                    });
                     break;
                 // for cloudy night
                 case "02n":
                 case "03n":
                 case "04n":
-                    icon.src = "{{url_for('static', filename='weather/0234n.png')}}";
+                    icons.forEach(icon => {
+                        icon.src = "{{url_for('static', filename='weather/0234n.png')}}";
+                    });
                     break;
                 // for rainy day
                 case "09d":
                 case "10d":
-                    icon.src = "{{url_for('static', filename='weather/910d.png')}}";
+                    icons.forEach(icon => {
+                        icon.src = "{{url_for('static', filename='weather/910d.png')}}";
+                    });
                     break;
                 // for rainy night
                 case "09n":
                 case "10n":
-                    icon.src = "{{url_for('static', filename='weather/910n.png')}}";
+                    icons.forEach(icon => {
+                        icon.src = "{{url_for('static', filename='weather/910n.png')}}";
+                    });
                     break;
                     // for thunderstorm
                 case "11d":
-                    icon.src = "{{url_for('static', filename='weather/11d.png')}}"
+                    icons.forEach(icon => {
+                        icon.src = "{{url_for('static', filename='weather/11d.png')}}";
+                    });
                     break;
             }
         }
-
         defineIconSky();
-
         // Add handlers for both buttons
-        document.querySelector('#weatherBtn').onclick = function() {
-            document.querySelector('#weatherHead').innerHTML = weatherData[province].data.current.weather.tp;
-            document.querySelector('#unit').innerHTML = "°C";
-            defineIconSky();
+        document.getElementById("weatherBtn").onclick = function() {
+            weatherHeads.forEach(weatherHead => {
+                weatherHead.innerHTML = weatherData[province].data.current.weather.tp;
+            });
+            units.forEach(unit => {
+                unit.innerHTML = "°C";
+            });
         }
-        document.querySelector('#aqiBtn').onclick = function() {
-            document.querySelector('#weatherHead').innerHTML = weatherData[province].data.current.pollution.aqius;
-            document.querySelector('#unit').innerHTML = "AQI";
-            defineIconAir();
+    
+        document.getElementById("aqiBtn").onclick = function() {
+            weatherHeads.forEach(weatherHead => {
+                weatherHead.innerHTML = weatherData[province].data.current.pollution.aqius;
+            });
+            units.forEach(unit => {
+                unit.innerHTML = "AQI";
+            });
         }
     });
 
